@@ -2,7 +2,7 @@ import Navbar from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building2, MapPin, Briefcase, Clock, Handshake, AlertCircle, MessageSquare, TrendingUp, Users } from "lucide-react";
+import { Building2, MapPin, Briefcase, Clock, Handshake, AlertCircle, MessageSquare, TrendingUp, Users, UserCircle } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { useMemo } from "react";
 
@@ -84,6 +84,13 @@ export default function Home() {
                           {job.description && (
                             <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{job.description}</p>
                           )}
+
+                          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-2 bg-muted/20 p-2 rounded-md">
+                            <span className="flex items-center gap-1"><UserCircle className="h-3 w-3" /> {job.authorName}</span>
+                            <span>•</span>
+                            <span>{job.authorExperience} at {job.authorCompany}</span>
+                          </div>
+
                           <div className="pt-3 border-t flex justify-between items-center mt-2">
                             <span className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" /> {job.posted}</span>
                             <Button size="sm" variant={job.hasReferral ? "outline" : "default"}>
@@ -129,6 +136,13 @@ export default function Home() {
                             <span className="font-semibold text-foreground mr-1">Process:</span> 
                             {interview.process}
                           </div>
+
+                          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-2 bg-muted/20 p-2 rounded-md">
+                            <span className="flex items-center gap-1"><UserCircle className="h-3 w-3" /> {interview.authorName}</span>
+                            <span>•</span>
+                            <span>{interview.authorExperience} at {interview.authorCompany}</span>
+                          </div>
+
                         </div>
                       </CardContent>
                     </Card>
