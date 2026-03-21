@@ -12,14 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
-  const [location, setLocation] = useLocation();
-
-  const navLinks = [
-    { name: "Jobs", href: "/jobs", icon: Briefcase },
-    { name: "Companies", href: "/companies", icon: Building2 },
-    { name: "Salaries", href: "/salaries", icon: TrendingUp },
-    { name: "Interviews", href: "/interviews", icon: Users },
-  ];
+  const [, setLocation] = useLocation();
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -30,25 +23,6 @@ export default function Navbar() {
               CareerDoor
             </span>
           </Link>
-          
-          <div className="hidden md:flex gap-1">
-            {navLinks.map((link) => {
-              const Icon = link.icon;
-              const isActive = location.startsWith(link.href);
-              return (
-                <Link key={link.name} href={link.href}>
-                  <Button 
-                    variant={isActive ? "secondary" : "ghost"} 
-                    size="sm" 
-                    className={`gap-2 ${isActive ? 'font-semibold text-primary' : 'text-muted-foreground'}`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {link.name}
-                  </Button>
-                </Link>
-              );
-            })}
-          </div>
         </div>
 
         <div className="flex items-center gap-4">
@@ -106,17 +80,6 @@ export default function Navbar() {
                   <span className="font-display text-2xl font-bold text-primary">CareerDoor</span>
                 </Link>
                 <div className="flex flex-col gap-2">
-                  {navLinks.map((link) => {
-                    const Icon = link.icon;
-                    return (
-                      <Link key={link.name} href={link.href}>
-                        <Button variant="ghost" className="w-full justify-start gap-3 text-lg font-medium">
-                          <Icon className="h-5 w-5" />
-                          {link.name}
-                        </Button>
-                      </Link>
-                    );
-                  })}
                   <Link href="/profile">
                     <Button variant="ghost" className="w-full justify-start gap-3 text-lg font-medium">
                       <UserCircle className="h-5 w-5" />

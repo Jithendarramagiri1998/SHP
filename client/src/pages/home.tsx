@@ -1,134 +1,181 @@
 import Navbar from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, MapPin, Building2, Star, TrendingUp, Users, Briefcase } from "lucide-react";
-import { Link } from "wouter";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Building2, MapPin, Briefcase, Clock, Handshake, AlertCircle, MessageSquare, TrendingUp, Users } from "lucide-react";
+import { useStore } from "@/lib/store";
+import { useMemo } from "react";
 
 export default function Home() {
+  const { jobs, salaries, interviews } = useStore();
+
+  const recentJobs = [...jobs].reverse().slice(0, 5);
+  const recentInterviews = [...interviews].reverse().slice(0, 5);
+
+  const topPayingCompanies = useMemo(() => {
+    const companyAverages: Record<string, { total: number, count: number }> = {};
+    salaries.forEach(s => {
+      if (!companyAverages[s.company]) {
+        companyAverages[s.company] = { total: 0, count: 0 };
+      }
+      companyAverages[s.company].total += (s.base + s.bonus + s.stock);
+      companyAverages[s.company].count += 1;
+    });
+
+    return Object.entries(companyAverages)
+      .map(([name, data]) => ({
+        name,
+        pay: `$${Math.round(data.total / data.count / 1000)}k`
+      }))
+      .sort((a, b) => {
+        const valA = parseInt(a.pay.replace(/[^0-9]/g, ''));
+        const valB = parseInt(b.pay.replace(/[^0-9]/g, ''));
+        return valB - valA;
+      })
+      .slice(0, 5);
+  }, [salaries]);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* Hero Section */}
+      {/* Minimal Hero Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background border-b">
         <div className="container mx-auto max-w-5xl text-center space-y-8">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
             Your Gateway to a <span className="text-primary">Better Career</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Discover company reviews, salary insights, interview questions, and referral opportunities to land your dream job.
+            Discover community-contributed job openings, verify your worth with salary insights, and prepare with real interview experiences.
           </p>
-          
-          <div className="bg-card p-2 rounded-xl shadow-lg border max-w-3xl mx-auto flex flex-col md:flex-row gap-2">
-            <div className="relative flex-1 flex items-center">
-              <Search className="absolute left-3 text-muted-foreground h-5 w-5" />
-              <Input placeholder="Job title, keywords, or company" className="pl-10 border-0 shadow-none focus-visible:ring-0 text-base h-12" />
-            </div>
-            <div className="w-px h-8 bg-border hidden md:block self-center"></div>
-            <div className="relative flex-1 flex items-center">
-              <MapPin className="absolute left-3 text-muted-foreground h-5 w-5" />
-              <Input placeholder="Location" className="pl-10 border-0 shadow-none focus-visible:ring-0 text-base h-12" />
-            </div>
-            <Button size="lg" className="h-12 px-8 text-base">Search Jobs</Button>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-2 pt-4">
-            <span className="text-sm text-muted-foreground self-center mr-2">Popular:</span>
-            {["Software Engineer", "Data Scientist", "Product Manager", "Remote", "Google"].map(tag => (
-              <Badge variant="secondary" key={tag} className="cursor-pointer hover:bg-secondary/80 text-sm font-medium px-3 py-1">{tag}</Badge>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* Main Services Grid */}
+      {/* Main Content Grid (Recent & Top Only) */}
       <section className="py-16 px-4 md:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            <ServiceCard 
-              icon={<Building2 className="h-8 w-8 text-blue-500" />}
-              title="Company Reviews"
-              description="Real reviews from employees about culture, work-life balance, and benefits."
-              link="/companies"
-              linkText="Read Reviews"
-            />
-            
-            <ServiceCard 
-              icon={<TrendingUp className="h-8 w-8 text-green-500" />}
-              title="Salary Insights"
-              description="Compare salaries across roles and companies to ensure you're paid fairly."
-              link="/salaries"
-              linkText="Explore Salaries"
-            />
-            
-            <ServiceCard 
-              icon={<Users className="h-8 w-8 text-purple-500" />}
-              title="Interview Insights"
-              description="Past interview questions, processes, and tips from candidates."
-              link="/interviews"
-              linkText="Prep for Interviews"
-            />
-            
-            <ServiceCard 
-              icon={<Briefcase className="h-8 w-8 text-orange-500" />}
-              title="Jobs & Walk-ins"
-              description="Find the latest job postings and upcoming walk-in drives."
-              link="/jobs"
-              linkText="Browse Jobs"
-            />
-            
-            <ServiceCard 
-              icon={<Star className="h-8 w-8 text-yellow-500" />}
-              title="Referrals"
-              description="Connect with employees who can refer you to top companies."
-              link="/jobs?tab=referrals"
-              linkText="Get Referred"
-            />
+        <div className="container mx-auto max-w-6xl space-y-16">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Recent Jobs */}
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <Briefcase className="h-6 w-6 text-primary" />
+                  Recent Job Openings
+                </h2>
+              </div>
+              <div className="space-y-4">
+                {recentJobs.length > 0 ? (
+                  recentJobs.map(job => (
+                    <Card key={job.id} className="hover:shadow-md transition-all border-border/60">
+                      <CardContent className="p-6">
+                        <div className="flex flex-col gap-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <h3 className="text-lg font-semibold">{job.title}</h3>
+                            <div className="flex gap-2">
+                              {job.isWalkin && <Badge variant="destructive" className="text-[10px]">Walk-in</Badge>}
+                              {job.hasReferral && <Badge variant="default" className="text-[10px]">Referral</Badge>}
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1 font-medium text-foreground"><Building2 className="h-4 w-4" /> {job.company}</span>
+                            <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> {job.location}</span>
+                          </div>
+                          {job.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{job.description}</p>
+                          )}
+                          <div className="pt-3 border-t flex justify-between items-center mt-2">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" /> {job.posted}</span>
+                            <Button size="sm" variant={job.hasReferral ? "outline" : "default"}>
+                              {job.hasReferral ? "Request Referral" : "Apply"}
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="text-center py-10 border rounded-xl bg-card text-muted-foreground">
+                    No recent jobs posted.
+                  </div>
+                )}
+              </div>
+            </div>
 
-            <ServiceCard 
-              icon={<MapPin className="h-8 w-8 text-red-500" />}
-              title="Career Track"
-              description="Manage your applications, saved jobs, and career preferences."
-              link="/auth"
-              linkText="Join Now"
-            />
-
+            {/* Recent Interviews */}
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <Users className="h-6 w-6 text-purple-500" />
+                  Latest Interview Insights
+                </h2>
+              </div>
+              <div className="space-y-4">
+                {recentInterviews.length > 0 ? (
+                  recentInterviews.map(interview => (
+                    <Card key={interview.id} className="hover:shadow-md transition-all border-border/60">
+                      <CardContent className="p-6">
+                        <div className="flex flex-col gap-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="text-lg font-semibold">{interview.role}</h3>
+                              <p className="text-sm font-medium text-foreground flex items-center gap-1 mt-1">
+                                <Building2 className="h-4 w-4" /> {interview.company} ({interview.level})
+                              </p>
+                            </div>
+                            <Badge variant={interview.difficulty === 'Hard' ? 'destructive' : 'secondary'}>{interview.difficulty}</Badge>
+                          </div>
+                          <div className="bg-muted/50 p-3 rounded-md border text-sm text-muted-foreground line-clamp-3">
+                            <span className="font-semibold text-foreground mr-1">Process:</span> 
+                            {interview.process}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="text-center py-10 border rounded-xl bg-card text-muted-foreground">
+                    No recent interview insights.
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
+
+          {/* Top Paying Companies */}
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <TrendingUp className="h-6 w-6 text-green-500" />
+                Top Paying Companies
+              </h2>
+            </div>
+            <Card className="border-border/60 shadow-sm bg-gradient-to-br from-primary/5 to-transparent">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                  {topPayingCompanies.length > 0 ? (
+                    topPayingCompanies.map((co, i) => (
+                      <div key={co.name} className="flex flex-col p-4 rounded-xl bg-background border border-border/50 hover:border-primary/30 transition-colors text-center">
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                          <span className="text-muted-foreground font-bold text-sm">#{i + 1}</span>
+                          <span className="font-semibold text-lg">{co.name}</span>
+                        </div>
+                        <span className="font-bold text-2xl text-green-600">{co.pay}</span>
+                        <span className="text-xs text-muted-foreground mt-1">Avg Total Comp</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="col-span-full text-center py-6 text-muted-foreground">
+                      Contribute salary details to see top paying companies here.
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
         </div>
       </section>
     </div>
   );
-}
-
-function ServiceCard({ icon, title, description, link, linkText }: any) {
-  return (
-    <Card className="hover:shadow-md transition-shadow group cursor-pointer border-border/60 hover:border-primary/20">
-      <CardHeader>
-        <div className="mb-4 p-3 bg-secondary w-fit rounded-lg group-hover:scale-110 transition-transform">
-          {icon}
-        </div>
-        <CardTitle className="text-xl">{title}</CardTitle>
-        <CardDescription className="text-base mt-2">{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Link href={link}>
-          <Button variant="link" className="p-0 h-auto font-semibold text-primary hover:text-primary/80 flex items-center gap-1 group/btn">
-            {linkText}
-            <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
-          </Button>
-        </Link>
-      </CardContent>
-    </Card>
-  );
-}
-
-// Simple Badge fallback since we didn't import it
-function Badge({ children, variant, className }: any) {
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-secondary text-secondary-foreground hover:bg-secondary/80 border-transparent ${className}`}>
-      {children}
-    </span>
-  )
 }
