@@ -6,6 +6,8 @@ export type UserProfile = {
   company: string;
   location: string;
   experience: string;
+  role?: string;
+  skills?: string[];
   email?: string;
   linkedin?: string;
 };
@@ -156,13 +158,15 @@ const defaultProfile: UserProfile = {
   company: "TechCorp",
   location: "San Francisco, CA",
   experience: "5 YOE",
+  role: "Software Engineer",
+  skills: ["React", "Node.js"],
   email: "john@example.com",
   linkedin: "linkedin.com/in/johndoe"
 };
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<UserProfile>(() => {
-    const saved = localStorage.getItem('cd_profile_v2');
+    const saved = localStorage.getItem('cd_profile_v3');
     return saved ? JSON.parse(saved) : defaultProfile;
   });
   
@@ -174,7 +178,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [salaries, setSalaries] = useState<Salary[]>(() => JSON.parse(localStorage.getItem('cd_salaries_v2') || '[]'));
   const [hrFeedbacks, setHrFeedbacks] = useState<HrFeedback[]>(() => JSON.parse(localStorage.getItem('cd_hrfeedbacks_v2') || '[]'));
 
-  useEffect(() => { localStorage.setItem('cd_profile_v2', JSON.stringify(profile)); }, [profile]);
+  useEffect(() => { localStorage.setItem('cd_profile_v3', JSON.stringify(profile)); }, [profile]);
   useEffect(() => { localStorage.setItem('cd_interviews_v2', JSON.stringify(interviews)); }, [interviews]);
   useEffect(() => { localStorage.setItem('cd_jobs_v2', JSON.stringify(jobs)); }, [jobs]);
   useEffect(() => { localStorage.setItem('cd_referrals_v2', JSON.stringify(referrals)); }, [referrals]);

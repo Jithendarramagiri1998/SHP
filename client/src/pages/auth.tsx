@@ -3,180 +3,101 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Linkedin, Mail, Phone, Upload, CheckCircle2 } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useStore } from "@/lib/store";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
-  const [step, setStep] = useState<"initial" | "verify" | "linkedin">("initial");
+  const { updateProfile } = useStore();
   
-  const handleInitialSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStep("verify");
-  };
+    const formData = new FormData(e.currentTarget);
+    
+    const skillsStr = formData.get('skills') as string;
+    const skills = skillsStr ? skillsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
 
-  const handleVerifySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep("linkedin");
-  };
+    updateProfile({
+      id: "user_" + Date.now().toString(),
+      name: formData.get('name') as string,
+      company: formData.get('company') as string,
+      experience: formData.get('experience') as string,
+      role: formData.get('role') as string,
+      email: formData.get('email') as string,
+      linkedin: formData.get('linkedin') as string,
+      skills: skills,
+      location: "Not Specified" // Defaults as per mockup
+    });
 
-  const handleComplete = () => {
     setLocation("/");
   };
 
   return (
-    <div className="min-h-screen bg-muted/30 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-xl">
         <Link href="/">
-          <span className="flex items-center justify-center gap-2 font-display text-2xl font-bold tracking-tight text-primary mb-8 cursor-pointer">
+          <span className="flex items-center justify-center gap-2 font-display text-3xl font-bold tracking-tight text-foreground mb-8 cursor-pointer uppercase">
             CareerDoor
           </span>
         </Link>
 
-        {step === "initial" && (
-          <Card className="shadow-lg border-border/60">
-            <CardHeader className="space-y-1 text-center">
-              <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-              <CardDescription>
-                Sign in to your account or create a new one
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="email" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="email">Email</TabsTrigger>
-                  <TabsTrigger value="phone">Phone</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="email">
-                  <form onSubmit={handleInitialSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email address</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="email" type="email" placeholder="name@example.com" className="pl-9" required />
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full">Continue</Button>
-                  </form>
-                </TabsContent>
-                
-                <TabsContent value="phone">
-                  <form onSubmit={handleInitialSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Mobile number</Label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" className="pl-9" required />
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full">Continue</Button>
-                  </form>
-                </TabsContent>
-              </Tabs>
+        <Card className="shadow-none border-2 border-border rounded-none">
+          <CardHeader className="space-y-1 text-center bg-muted/20 border-b-2 border-border">
+            <CardTitle className="text-2xl font-bold uppercase tracking-wider">Join Community</CardTitle>
+            <CardDescription className="text-foreground font-medium uppercase text-xs tracking-widest">
+              Please enter your professional details
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-8">
+            <form onSubmit={handleLoginSubmit} className="space-y-6">
               
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label htmlFor="name" className="text-xs uppercase tracking-widest font-bold">Full Name *</Label>
+                  <Input id="name" name="name" placeholder="John Doe" className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-              
-              <Button variant="outline" type="button" className="w-full" onClick={() => setStep("linkedin")}>
-                <Linkedin className="mr-2 h-4 w-4 text-[#0A66C2]" />
-                LinkedIn
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {step === "verify" && (
-          <Card className="shadow-lg border-border/60 animate-in fade-in slide-in-from-bottom-4">
-            <CardHeader className="space-y-1 text-center">
-              <CardTitle className="text-2xl font-bold">Check your inbox</CardTitle>
-              <CardDescription>
-                We've sent a 6-digit verification code to your email/phone
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleVerifySubmit} className="space-y-6">
-                <div className="flex justify-center gap-2">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <Input 
-                      key={i} 
-                      className="w-12 h-14 text-center text-lg font-bold" 
-                      maxLength={1}
-                      required
-                    />
-                  ))}
-                </div>
-                <Button type="submit" className="w-full">Verify & Continue</Button>
-              </form>
-            </CardContent>
-            <CardFooter className="flex justify-center">
-              <Button variant="link" className="text-sm text-muted-foreground" onClick={() => setStep("initial")}>
-                Didn't receive a code? Resend
-              </Button>
-            </CardFooter>
-          </Card>
-        )}
-
-        {step === "linkedin" && (
-          <Card className="shadow-lg border-border/60 animate-in fade-in slide-in-from-bottom-4">
-            <CardHeader className="space-y-1 text-center">
-              <CardTitle className="text-2xl font-bold">Complete your profile</CardTitle>
-              <CardDescription>
-                Upload your LinkedIn details to unlock all features
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              
-              <div className="border-2 border-dashed border-border rounded-xl p-8 text-center space-y-4 hover:bg-muted/50 transition-colors cursor-pointer group">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                  <Upload className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium">Upload LinkedIn PDF</p>
-                  <p className="text-sm text-muted-foreground">Save your profile as PDF and upload here</p>
-                </div>
-              </div>
-              
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">
-                    Or paste URL
-                  </span>
+                <div className="space-y-3">
+                  <Label htmlFor="email" className="text-xs uppercase tracking-widest font-bold">Email Address *</Label>
+                  <Input id="email" name="email" type="email" placeholder="john@example.com" className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="linkedin-url">LinkedIn Profile URL</Label>
-                <div className="relative">
-                  <Linkedin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="linkedin-url" placeholder="https://linkedin.com/in/username" className="pl-9" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label htmlFor="company" className="text-xs uppercase tracking-widest font-bold">Company Name *</Label>
+                  <Input id="company" name="company" placeholder="e.g. Google, Startup Inc." className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
+                </div>
+                <div className="space-y-3">
+                  <Label htmlFor="role" className="text-xs uppercase tracking-widest font-bold">Current Role *</Label>
+                  <Input id="role" name="role" placeholder="e.g. Software Engineer" className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
                 </div>
               </div>
 
-              <Button className="w-full gap-2" onClick={handleComplete}>
-                <CheckCircle2 className="h-4 w-4" />
-                Complete Registration
-              </Button>
-              
-              <Button variant="ghost" className="w-full" onClick={handleComplete}>
-                Skip for now
-              </Button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label htmlFor="experience" className="text-xs uppercase tracking-widest font-bold">Experience *</Label>
+                  <Input id="experience" name="experience" placeholder="e.g. 5 Years" className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
+                </div>
+                <div className="space-y-3">
+                  <Label htmlFor="linkedin" className="text-xs uppercase tracking-widest font-bold">LinkedIn URL *</Label>
+                  <Input id="linkedin" name="linkedin" type="url" placeholder="https://linkedin.com/in/..." className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
+                </div>
+              </div>
 
-            </CardContent>
-          </Card>
-        )}
+              <div className="space-y-3">
+                <Label htmlFor="skills" className="text-xs uppercase tracking-widest font-bold">Skill Set *</Label>
+                <Input id="skills" name="skills" placeholder="React, Node.js, Python (comma separated)" className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
+              </div>
+
+              <div className="pt-4">
+                <Button type="submit" className="w-full rounded-none h-14 text-sm font-bold uppercase tracking-widest border-2 border-transparent hover:border-foreground hover:bg-transparent hover:text-foreground transition-all">
+                  Access CareerDoor
+                </Button>
+              </div>
+
+            </form>
+          </CardContent>
+        </Card>
 
       </div>
     </div>

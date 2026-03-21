@@ -1,16 +1,20 @@
 import Navbar from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building2, MapPin, Briefcase, Clock, Handshake, AlertCircle, MessageSquare, TrendingUp, Users, UserCircle } from "lucide-react";
+import { Building2, MapPin, Briefcase, Clock, UserCircle, Users, Handshake, Star, TrendingUp, ClipboardList, ArrowRight } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { useMemo } from "react";
+import { Link } from "wouter";
 
 export default function Home() {
-  const { jobs, salaries, interviews } = useStore();
+  const { jobs, salaries, interviews, referrals, cultures, hrFeedbacks } = useStore();
 
   const recentJobs = [...jobs].reverse().slice(0, 5);
   const recentInterviews = [...interviews].reverse().slice(0, 5);
+  const recentReferrals = [...referrals].reverse().slice(0, 5);
+  const recentCultures = [...cultures].reverse().slice(0, 5);
+  const recentHrFeedbacks = [...hrFeedbacks].reverse().slice(0, 5);
 
   const topPayingCompanies = useMemo(() => {
     const companyAverages: Record<string, { total: number, count: number }> = {};
@@ -35,157 +39,217 @@ export default function Home() {
       .slice(0, 5);
   }, [salaries]);
 
+  const SectionHeader = ({ title, icon: Icon, link }: { title: string, icon: any, link: string }) => (
+    <div className="flex items-center justify-between mb-8 border-b-2 border-foreground pb-4">
+      <h2 className="text-2xl font-bold flex items-center gap-3 uppercase tracking-wider">
+        <Icon className="h-6 w-6" />
+        {title}
+      </h2>
+      <Link href={link}>
+        <Button variant="ghost" className="gap-2 uppercase text-xs tracking-widest font-bold hover:bg-foreground hover:text-background rounded-none">
+          View All <ArrowRight className="h-4 w-4" />
+        </Button>
+      </Link>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* Minimal Hero Section */}
-      <section className="py-20 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background border-b">
-        <div className="container mx-auto max-w-5xl text-center space-y-8">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
-            Your Gateway to a <span className="text-primary">Better Career</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Discover community-contributed job openings, verify your worth with salary insights, and prepare with real interview experiences.
-          </p>
+      {/* Brutalist Hero Section */}
+      <section className="py-24 px-4 md:px-6 lg:px-8 border-b-4 border-foreground bg-background pattern-grid">
+        <div className="container mx-auto max-w-6xl">
+          <div className="max-w-4xl space-y-6">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-foreground leading-none uppercase">
+              The Truth <br/>About Tech <br/><span className="text-background bg-foreground px-4 italic block w-max mt-2">Careers</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-foreground/80 max-w-2xl font-medium border-l-4 border-foreground pl-6 py-2 uppercase tracking-wide">
+              Real jobs. Real salaries. Real interview experiences. By the community, for the community.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Main Content Grid (Recent & Top Only) */}
-      <section className="py-16 px-4 md:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl space-y-16">
+      {/* Main Content Grid */}
+      <section className="py-20 px-4 md:px-6 lg:px-8">
+        <div className="container mx-auto max-w-7xl space-y-24">
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Recent Jobs */}
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <Briefcase className="h-6 w-6 text-primary" />
-                  Recent Job Openings
-                </h2>
-              </div>
-              <div className="space-y-4">
-                {recentJobs.length > 0 ? (
-                  recentJobs.map(job => (
-                    <Card key={job.id} className="hover:shadow-md transition-all border-border/60">
-                      <CardContent className="p-6">
-                        <div className="flex flex-col gap-3">
-                          <div className="flex items-center justify-between gap-2">
-                            <h3 className="text-lg font-semibold">{job.title}</h3>
-                            <div className="flex gap-2">
-                              {job.isWalkin && <Badge variant="destructive" className="text-[10px]">Walk-in</Badge>}
-                              {job.hasReferral && <Badge variant="default" className="text-[10px]">Referral</Badge>}
-                            </div>
+          {/* JOBS SECTION */}
+          <div>
+            <SectionHeader title="Latest Job Openings" icon={Briefcase} link="/jobs?tab=jobs" />
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {recentJobs.length > 0 ? (
+                recentJobs.map(job => (
+                  <Card key={job.id} className="border-2 border-foreground rounded-none hover:-translate-y-2 transition-transform duration-300 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-background">
+                    <CardContent className="p-6">
+                      <div className="flex flex-col h-full justify-between gap-6">
+                        <div>
+                          <div className="flex justify-between items-start mb-4">
+                            <h3 className="text-xl font-bold uppercase tracking-tight">{job.title}</h3>
+                            {job.isWalkin && <Badge variant="outline" className="border-2 border-foreground rounded-none uppercase text-[10px] font-bold">Walk-in</Badge>}
                           </div>
-                          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1 font-medium text-foreground"><Building2 className="h-4 w-4" /> {job.company}</span>
-                            <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> {job.location}</span>
-                          </div>
-                          {job.description && (
-                            <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{job.description}</p>
-                          )}
-
-                          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-2 bg-muted/20 p-2 rounded-md">
-                            <span className="flex items-center gap-1"><UserCircle className="h-3 w-3" /> {job.authorName}</span>
-                            <span>•</span>
-                            <span>{job.authorExperience} at {job.authorCompany}</span>
-                          </div>
-
-                          <div className="pt-3 border-t flex justify-between items-center mt-2">
-                            <span className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3" /> {job.posted}</span>
-                            <Button size="sm" variant={job.hasReferral ? "outline" : "default"}>
-                              {job.hasReferral ? "Request Referral" : "Apply"}
-                            </Button>
+                          <div className="space-y-2 text-sm font-medium uppercase tracking-wide">
+                            <span className="flex items-center gap-2"><Building2 className="h-4 w-4" /> {job.company}</span>
+                            <span className="flex items-center gap-2"><MapPin className="h-4 w-4" /> {job.location}</span>
                           </div>
                         </div>
+                        <div className="pt-4 border-t-2 border-foreground/20 flex justify-between items-center">
+                          <div className="text-xs uppercase tracking-wider font-bold">
+                            By {job.authorName}
+                          </div>
+                          <Button size="sm" className="rounded-none uppercase font-bold text-xs tracking-widest">
+                            Apply
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-full p-8 border-2 border-dashed border-foreground/50 text-center font-bold uppercase tracking-widest text-foreground/50">No jobs posted yet.</div>
+              )}
+            </div>
+          </div>
+
+          {/* INTERVIEWS SECTION */}
+          <div>
+            <SectionHeader title="Interview Insights" icon={Users} link="/jobs?tab=interviews" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {recentInterviews.length > 0 ? (
+                recentInterviews.map(interview => (
+                  <Card key={interview.id} className="border-2 border-foreground rounded-none bg-background">
+                    <CardContent className="p-0">
+                      <div className="flex flex-col sm:flex-row">
+                        <div className="bg-foreground text-background p-6 sm:w-1/3 flex flex-col justify-between">
+                          <div>
+                            <Badge variant="secondary" className="rounded-none uppercase font-bold text-xs bg-background text-foreground mb-4">{interview.difficulty}</Badge>
+                            <h3 className="text-xl font-bold uppercase">{interview.role}</h3>
+                            <p className="mt-2 font-medium opacity-80">{interview.company}</p>
+                          </div>
+                          <div className="mt-8 font-bold uppercase text-sm tracking-widest">
+                            {interview.outcome}
+                          </div>
+                        </div>
+                        <div className="p-6 sm:w-2/3 flex flex-col justify-between">
+                          <div>
+                            <h4 className="text-xs font-bold uppercase tracking-widest mb-2">Process</h4>
+                            <p className="text-sm font-medium leading-relaxed line-clamp-3 mb-4">{interview.process}</p>
+                          </div>
+                          <div className="pt-4 border-t-2 border-foreground/10 text-xs font-bold uppercase tracking-wider">
+                            Shared by {interview.authorName}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-full p-8 border-2 border-dashed border-foreground/50 text-center font-bold uppercase tracking-widest text-foreground/50">No interviews posted yet.</div>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            {/* REFERRALS SECTION */}
+            <div>
+              <SectionHeader title="Referrals" icon={Handshake} link="/jobs?tab=referrals" />
+              <div className="space-y-4">
+                {recentReferrals.length > 0 ? (
+                  recentReferrals.map(ref => (
+                    <Card key={ref.id} className="border-2 border-foreground rounded-none bg-background">
+                      <CardContent className="p-6 flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-bold uppercase">{ref.company}</h3>
+                          <p className="text-sm font-medium uppercase tracking-wider mt-1 opacity-80">Role: {ref.role}</p>
+                          <p className="text-xs font-bold mt-4 tracking-widest">REF BY: {ref.authorName}</p>
+                        </div>
+                        <Button variant="outline" className="rounded-none border-2 border-foreground uppercase font-bold text-xs">
+                          Request
+                        </Button>
                       </CardContent>
                     </Card>
                   ))
                 ) : (
-                  <div className="text-center py-10 border rounded-xl bg-card text-muted-foreground">
-                    No recent jobs posted.
-                  </div>
+                  <div className="p-8 border-2 border-dashed border-foreground/50 text-center font-bold uppercase tracking-widest text-foreground/50">No referrals available.</div>
                 )}
               </div>
             </div>
 
-            {/* Recent Interviews */}
+            {/* CULTURE SECTION */}
             <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <Users className="h-6 w-6 text-purple-500" />
-                  Latest Interview Insights
-                </h2>
-              </div>
+              <SectionHeader title="Company Culture" icon={Star} link="/jobs?tab=culture" />
               <div className="space-y-4">
-                {recentInterviews.length > 0 ? (
-                  recentInterviews.map(interview => (
-                    <Card key={interview.id} className="hover:shadow-md transition-all border-border/60">
+                {recentCultures.length > 0 ? (
+                  recentCultures.map(culture => (
+                    <Card key={culture.id} className="border-2 border-foreground rounded-none bg-background">
                       <CardContent className="p-6">
-                        <div className="flex flex-col gap-3">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="text-lg font-semibold">{interview.role}</h3>
-                              <p className="text-sm font-medium text-foreground flex items-center gap-1 mt-1">
-                                <Building2 className="h-4 w-4" /> {interview.company} ({interview.level})
-                              </p>
-                            </div>
-                            <Badge variant={interview.difficulty === 'Hard' ? 'destructive' : 'secondary'}>{interview.difficulty}</Badge>
+                        <div className="flex justify-between items-start mb-4">
+                          <h3 className="text-lg font-bold uppercase">{culture.company}</h3>
+                          <div className="bg-foreground text-background font-bold px-3 py-1 text-sm">{culture.rating}/5</div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 text-sm font-medium">
+                          <div className="border-l-2 border-foreground pl-3">
+                            <span className="uppercase text-xs font-bold tracking-widest block mb-1">Pros</span>
+                            <span className="line-clamp-2">{culture.pros}</span>
                           </div>
-                          <div className="bg-muted/50 p-3 rounded-md border text-sm text-muted-foreground line-clamp-3">
-                            <span className="font-semibold text-foreground mr-1">Process:</span> 
-                            {interview.process}
+                          <div className="border-l-2 border-foreground pl-3">
+                            <span className="uppercase text-xs font-bold tracking-widest block mb-1">Cons</span>
+                            <span className="line-clamp-2">{culture.cons}</span>
                           </div>
-
-                          <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-2 bg-muted/20 p-2 rounded-md">
-                            <span className="flex items-center gap-1"><UserCircle className="h-3 w-3" /> {interview.authorName}</span>
-                            <span>•</span>
-                            <span>{interview.authorExperience} at {interview.authorCompany}</span>
-                          </div>
-
                         </div>
                       </CardContent>
                     </Card>
                   ))
                 ) : (
-                  <div className="text-center py-10 border rounded-xl bg-card text-muted-foreground">
-                    No recent interview insights.
-                  </div>
+                  <div className="p-8 border-2 border-dashed border-foreground/50 text-center font-bold uppercase tracking-widest text-foreground/50">No culture reviews yet.</div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Top Paying Companies */}
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                <TrendingUp className="h-6 w-6 text-green-500" />
-                Top Paying Companies
-              </h2>
-            </div>
-            <Card className="border-border/60 shadow-sm bg-gradient-to-br from-primary/5 to-transparent">
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                  {topPayingCompanies.length > 0 ? (
-                    topPayingCompanies.map((co, i) => (
-                      <div key={co.name} className="flex flex-col p-4 rounded-xl bg-background border border-border/50 hover:border-primary/30 transition-colors text-center">
-                        <div className="flex items-center justify-center gap-2 mb-2">
-                          <span className="text-muted-foreground font-bold text-sm">#{i + 1}</span>
-                          <span className="font-semibold text-lg">{co.name}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            {/* HR FEEDBACK SECTION */}
+            <div>
+              <SectionHeader title="HR Feedback" icon={ClipboardList} link="/jobs?tab=hrfeedback" />
+              <div className="space-y-4">
+                {recentHrFeedbacks.length > 0 ? (
+                  recentHrFeedbacks.map(feedback => (
+                    <Card key={feedback.id} className="border-2 border-foreground rounded-none bg-background">
+                      <CardContent className="p-6">
+                        <div className="mb-4 pb-4 border-b-2 border-foreground/20">
+                          <h3 className="text-lg font-bold uppercase">{feedback.company}</h3>
+                          <p className="text-sm font-medium uppercase tracking-wider mt-1 opacity-80">HR: {feedback.hrName}</p>
                         </div>
-                        <span className="font-bold text-2xl text-green-600">{co.pay}</span>
-                        <span className="text-xs text-muted-foreground mt-1">Avg Total Comp</span>
+                        <p className="text-sm font-medium line-clamp-2 italic">"{feedback.comments}"</p>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="p-8 border-2 border-dashed border-foreground/50 text-center font-bold uppercase tracking-widest text-foreground/50">No HR feedback yet.</div>
+                )}
+              </div>
+            </div>
+
+            {/* TOP PAYING COMPANIES */}
+            <div>
+              <SectionHeader title="Top Salaries" icon={TrendingUp} link="/jobs" />
+              <div className="space-y-4">
+                {topPayingCompanies.length > 0 ? (
+                  topPayingCompanies.map((co, i) => (
+                    <div key={co.name} className="flex items-center justify-between p-6 border-2 border-foreground bg-background">
+                      <div className="flex items-center gap-4">
+                        <span className="text-3xl font-black text-transparent" style={{ WebkitTextStroke: '1px hsl(var(--foreground))' }}>0{i + 1}</span>
+                        <span className="font-bold text-lg uppercase tracking-wider">{co.name}</span>
                       </div>
-                    ))
-                  ) : (
-                    <div className="col-span-full text-center py-6 text-muted-foreground">
-                      Contribute salary details to see top paying companies here.
+                      <span className="font-black text-2xl">{co.pay}</span>
                     </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                  ))
+                ) : (
+                  <div className="p-8 border-2 border-dashed border-foreground/50 text-center font-bold uppercase tracking-widest text-foreground/50">No salaries reported yet.</div>
+                )}
+              </div>
+            </div>
           </div>
 
         </div>

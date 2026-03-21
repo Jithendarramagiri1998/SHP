@@ -15,75 +15,59 @@ export default function Navbar() {
   const [, setLocation] = useLocation();
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full border-b-4 border-foreground bg-background">
+      <div className="container flex h-20 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-6">
           <Link href="/">
-            <span className="flex items-center gap-2 font-display text-xl font-bold tracking-tight text-primary cursor-pointer">
+            <span className="flex items-center gap-2 font-display text-2xl font-black tracking-tighter uppercase text-foreground cursor-pointer hover:bg-foreground hover:text-background transition-colors px-2 py-1">
               CareerDoor
             </span>
           </Link>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-4">
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="default" className="gap-2 shadow-sm font-semibold rounded-full bg-gradient-to-r from-primary to-purple-600 hover:opacity-90 transition-opacity">
+                <Button variant="default" className="gap-2 font-bold uppercase tracking-widest rounded-none border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <Plus className="h-4 w-4" /> Contribute
-                  <ChevronDown className="h-3 w-3 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 rounded-xl shadow-lg border-primary/10">
-                <DropdownMenuLabel className="font-semibold text-primary">Share with Community</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer py-3" onClick={() => setLocation('/contribute?tab=interview')}>
-                  <MessageSquare className="mr-3 h-5 w-5 text-blue-500" />
-                  <div className="flex flex-col">
-                    <span className="font-medium">Interview Experience</span>
-                    <span className="text-xs text-muted-foreground">Questions, process, outcome</span>
-                  </div>
+              <DropdownMenuContent align="end" className="w-64 rounded-none border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <DropdownMenuLabel className="font-bold uppercase tracking-wider text-xs">Share Insight</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-foreground" />
+                <DropdownMenuItem className="cursor-pointer py-3 rounded-none focus:bg-foreground focus:text-background" onClick={() => setLocation('/contribute?tab=interview')}>
+                  <MessageSquare className="mr-3 h-4 w-4" />
+                  <span className="font-bold uppercase tracking-wider text-sm">Interview</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer py-3" onClick={() => setLocation('/contribute?tab=job')}>
-                  <Briefcase className="mr-3 h-5 w-5 text-orange-500" />
-                  <div className="flex flex-col">
-                    <span className="font-medium">Job Opening / Walk-in</span>
-                    <span className="text-xs text-muted-foreground">Post roles or walk-in drives</span>
-                  </div>
+                <DropdownMenuItem className="cursor-pointer py-3 rounded-none focus:bg-foreground focus:text-background" onClick={() => setLocation('/contribute?tab=job')}>
+                  <Briefcase className="mr-3 h-4 w-4" />
+                  <span className="font-bold uppercase tracking-wider text-sm">Job / Walk-in</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer py-3" onClick={() => setLocation('/contribute?tab=referral')}>
-                  <Handshake className="mr-3 h-5 w-5 text-green-500" />
-                  <div className="flex flex-col">
-                    <span className="font-medium">Offer a Referral</span>
-                    <span className="text-xs text-muted-foreground">Refer someone to your company</span>
-                  </div>
+                <DropdownMenuItem className="cursor-pointer py-3 rounded-none focus:bg-foreground focus:text-background" onClick={() => setLocation('/contribute?tab=referral')}>
+                  <Handshake className="mr-3 h-4 w-4" />
+                  <span className="font-bold uppercase tracking-wider text-sm">Referral</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer py-3" onClick={() => setLocation('/contribute?tab=culture')}>
-                  <Heart className="mr-3 h-5 w-5 text-pink-500" />
-                  <div className="flex flex-col">
-                    <span className="font-medium">Culture & Benefits</span>
-                    <span className="text-xs text-muted-foreground">Work-life balance, perks</span>
-                  </div>
+                <DropdownMenuItem className="cursor-pointer py-3 rounded-none focus:bg-foreground focus:text-background" onClick={() => setLocation('/contribute?tab=culture')}>
+                  <Heart className="mr-3 h-4 w-4" />
+                  <span className="font-bold uppercase tracking-wider text-sm">Culture</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer py-3" onClick={() => setLocation('/contribute?tab=hrfeedback')}>
-                  <ClipboardList className="mr-3 h-5 w-5 text-purple-500" />
-                  <div className="flex flex-col">
-                    <span className="font-medium">HR & Company Feedback</span>
-                    <span className="text-xs text-muted-foreground">Review recruiters & hiring</span>
-                  </div>
+                <DropdownMenuItem className="cursor-pointer py-3 rounded-none focus:bg-foreground focus:text-background" onClick={() => setLocation('/contribute?tab=hrfeedback')}>
+                  <ClipboardList className="mr-3 h-4 w-4" />
+                  <span className="font-bold uppercase tracking-wider text-sm">HR Feedback</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
             <Link href="/profile">
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary rounded-full">
+              <Button variant="ghost" size="icon" className="rounded-none border-2 border-transparent hover:border-foreground transition-all">
                 <UserCircle className="h-6 w-6" />
               </Button>
             </Link>
 
             <Link href="/auth">
-              <Button variant="outline" className="gap-2 border-primary/20 hover:bg-primary/5 rounded-full">
+              <Button variant="outline" className="gap-2 rounded-none border-2 border-foreground font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors">
                 <LogIn className="h-4 w-4" />
                 Sign In
               </Button>
@@ -92,34 +76,33 @@ export default function Navbar() {
 
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="outline" size="icon" className="md:hidden rounded-none border-2 border-foreground">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col gap-6 py-6">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] border-l-4 border-foreground rounded-none p-0">
+              <div className="flex flex-col h-full bg-background p-6">
                 <Link href="/">
-                  <span className="font-display text-2xl font-bold text-primary">CareerDoor</span>
+                  <span className="font-display text-3xl font-black uppercase tracking-tighter border-b-4 border-foreground pb-6 mb-6 block">CareerDoor</span>
                 </Link>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-4">
                   <Link href="/profile">
-                    <Button variant="ghost" className="w-full justify-start gap-3 text-lg font-medium">
+                    <Button variant="outline" className="w-full justify-start gap-3 text-lg font-bold uppercase tracking-wider rounded-none border-2 border-foreground h-14">
                       <UserCircle className="h-5 w-5" />
                       My Profile
                     </Button>
                   </Link>
-                </div>
-                <hr className="border-border" />
-                <div className="flex flex-col gap-3 mt-4">
-                  <Button className="w-full justify-start gap-2 bg-gradient-to-r from-primary to-purple-600" onClick={() => {
+                  <Button className="w-full justify-start gap-3 text-lg font-bold uppercase tracking-wider rounded-none border-2 border-foreground h-14 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" onClick={() => {
                     setLocation('/contribute');
                   }}>
-                    <PlusCircle className="h-4 w-4" /> Add Contribution
+                    <PlusCircle className="h-5 w-5" /> Add Insight
                   </Button>
+                </div>
+                <div className="mt-auto">
                   <Link href="/auth">
-                    <Button variant="outline" className="w-full justify-start gap-2">
-                      <LogIn className="h-4 w-4" /> Sign In
+                    <Button variant="outline" className="w-full justify-center gap-2 font-bold uppercase tracking-widest rounded-none border-2 border-foreground h-14 bg-foreground text-background hover:bg-background hover:text-foreground transition-colors">
+                      <LogIn className="h-5 w-5" /> Sign In
                     </Button>
                   </Link>
                 </div>

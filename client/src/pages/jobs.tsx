@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Building2, Briefcase, Clock, UserCircle, MessageSquare, Briefcase as JobIcon, Handshake, Heart, Star, Mail, Linkedin, ClipboardList, Tag } from "lucide-react";
+import { Search, MapPin, Building2, Briefcase, Clock, UserCircle, MessageSquare, Briefcase as JobIcon, Handshake, Heart, Star, Mail, Linkedin, ClipboardList, Tag, ArrowRight } from "lucide-react";
 import { useStore, Job, Referral, WorkCulture, Interview, HrFeedback } from "@/lib/store";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,31 +12,33 @@ export default function JobsPage() {
   const { jobs, referrals, cultures, interviews, hrFeedbacks } = useStore();
   
   return (
-    <div className="min-h-screen bg-muted/20 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       <Navbar />
       
-      <main className="container mx-auto py-8 px-4 md:px-6 max-w-5xl">
-        <div className="mb-10 text-center md:text-left">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">Explore Opportunities & Insights</h1>
-          <p className="text-muted-foreground mt-3 text-lg">Find jobs, request referrals, learn about company culture, or read HR feedback.</p>
+      <main className="container mx-auto py-12 px-4 md:px-6 max-w-6xl">
+        <div className="mb-12 border-b-4 border-foreground pb-6">
+          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground uppercase">Explore Insights</h1>
+          <p className="text-foreground/80 mt-4 text-xl font-medium uppercase tracking-wider border-l-4 border-foreground pl-4">
+            Find jobs, request referrals, and read real reviews.
+          </p>
         </div>
 
-        <Tabs defaultValue="jobs" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto p-1.5 bg-card border rounded-2xl shadow-sm">
-            <TabsTrigger value="jobs" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-600 transition-all">
-              <JobIcon className="h-4 w-4" /> <span className="hidden md:inline">Jobs</span>
+        <Tabs defaultValue="jobs" className="space-y-12">
+          <TabsList className="flex flex-wrap w-full justify-start h-auto bg-transparent p-0 gap-4 border-none">
+            <TabsTrigger value="jobs" className="rounded-none border-2 border-foreground font-bold uppercase tracking-widest px-6 py-4 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all flex items-center gap-2">
+              <JobIcon className="h-5 w-5" /> Jobs
             </TabsTrigger>
-            <TabsTrigger value="referrals" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-green-500/10 data-[state=active]:text-green-600 transition-all">
-              <Handshake className="h-4 w-4" /> <span className="hidden md:inline">Referrals</span>
+            <TabsTrigger value="referrals" className="rounded-none border-2 border-foreground font-bold uppercase tracking-widest px-6 py-4 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all flex items-center gap-2">
+              <Handshake className="h-5 w-5" /> Referrals
             </TabsTrigger>
-            <TabsTrigger value="interviews" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-600 transition-all">
-              <MessageSquare className="h-4 w-4" /> <span className="hidden md:inline">Interviews</span>
+            <TabsTrigger value="interviews" className="rounded-none border-2 border-foreground font-bold uppercase tracking-widest px-6 py-4 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" /> Interviews
             </TabsTrigger>
-            <TabsTrigger value="culture" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 transition-all">
-              <Heart className="h-4 w-4" /> <span className="hidden md:inline">Culture</span>
+            <TabsTrigger value="culture" className="rounded-none border-2 border-foreground font-bold uppercase tracking-widest px-6 py-4 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all flex items-center gap-2">
+              <Heart className="h-5 w-5" /> Culture
             </TabsTrigger>
-            <TabsTrigger value="hrfeedback" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-purple-500/10 data-[state=active]:text-purple-600 transition-all">
-              <ClipboardList className="h-4 w-4" /> <span className="hidden md:inline">HR Feedback</span>
+            <TabsTrigger value="hrfeedback" className="rounded-none border-2 border-foreground font-bold uppercase tracking-widest px-6 py-4 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-[4px_4px_0_0_rgba(0,0,0,1)] transition-all flex items-center gap-2">
+              <ClipboardList className="h-5 w-5" /> HR
             </TabsTrigger>
           </TabsList>
 
@@ -44,7 +46,9 @@ export default function JobsPage() {
             {jobs.length === 0 ? (
               <EmptyState title="No Jobs Yet" description="Be the first to post a job opening or walk-in drive!" link="/contribute?tab=job" />
             ) : (
-              jobs.map(job => <JobCard key={job.id} job={job} />)
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {jobs.map(job => <JobCard key={job.id} job={job} />)}
+              </div>
             )}
           </TabsContent>
 
@@ -52,7 +56,9 @@ export default function JobsPage() {
             {referrals.length === 0 ? (
               <EmptyState title="No Referrals Yet" description="Be the first to offer a referral at your company!" link="/contribute?tab=referral" />
             ) : (
-              referrals.map(ref => <ReferralCard key={ref.id} referral={ref} />)
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {referrals.map(ref => <ReferralCard key={ref.id} referral={ref} />)}
+              </div>
             )}
           </TabsContent>
 
@@ -60,7 +66,9 @@ export default function JobsPage() {
             {interviews.length === 0 ? (
               <EmptyState title="No Interviews Yet" description="Share your interview experience to help others." link="/contribute?tab=interview" />
             ) : (
-              interviews.map(int => <InterviewCard key={int.id} interview={int} />)
+              <div className="space-y-8">
+                {interviews.map(int => <InterviewCard key={int.id} interview={int} />)}
+              </div>
             )}
           </TabsContent>
 
@@ -68,7 +76,9 @@ export default function JobsPage() {
             {cultures.length === 0 ? (
               <EmptyState title="No Culture Reviews Yet" description="Share what it's like to work at your company." link="/contribute?tab=culture" />
             ) : (
-              cultures.map(culture => <CultureCard key={culture.id} culture={culture} />)
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {cultures.map(culture => <CultureCard key={culture.id} culture={culture} />)}
+              </div>
             )}
           </TabsContent>
 
@@ -76,7 +86,9 @@ export default function JobsPage() {
             {hrFeedbacks.length === 0 ? (
               <EmptyState title="No HR Feedback Yet" description="Share your experiences with recruiters and hiring processes." link="/contribute?tab=hrfeedback" />
             ) : (
-              hrFeedbacks.map(feedback => <HrFeedbackCard key={feedback.id} feedback={feedback} />)
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {hrFeedbacks.map(feedback => <HrFeedbackCard key={feedback.id} feedback={feedback} />)}
+              </div>
             )}
           </TabsContent>
         </Tabs>
@@ -88,11 +100,13 @@ export default function JobsPage() {
 
 function EmptyState({ title, description, link }: { title: string, description: string, link: string }) {
   return (
-    <div className="text-center py-16 border border-dashed rounded-2xl bg-card">
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-muted-foreground mb-6">{description}</p>
+    <div className="text-center py-20 border-4 border-dashed border-foreground bg-background">
+      <h3 className="text-2xl font-bold uppercase tracking-widest mb-4">{title}</h3>
+      <p className="text-foreground/70 font-medium uppercase tracking-wider mb-8">{description}</p>
       <Link href={link}>
-        <Button variant="default" className="rounded-xl">Contribute Now</Button>
+        <Button className="rounded-none border-2 border-foreground font-bold uppercase tracking-widest shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all">
+          Contribute Now
+        </Button>
       </Link>
     </div>
   )
@@ -100,51 +114,40 @@ function EmptyState({ title, description, link }: { title: string, description: 
 
 function JobCard({ job }: { job: Job }) {
   return (
-    <Card className="hover:shadow-md transition-all border-border/60 group rounded-2xl overflow-hidden">
-      <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 to-red-500"></div>
-      <CardContent className="p-6">
-        <div className="flex flex-col md:flex-row gap-6 justify-between items-start">
-          <div className="space-y-4 flex-1">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h3 className="text-xl font-semibold group-hover:text-orange-500 transition-colors cursor-pointer">{job.title}</h3>
-                {job.isWalkin && <Badge variant="destructive" className="bg-red-500">Walk-in Drive</Badge>}
-              </div>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5 font-medium text-foreground"><Building2 className="h-4 w-4 text-primary" /> {job.company}</span>
-                <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {job.location}</span>
-                <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4" /> {job.type}</span>
-                {job.experienceRequired && <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> {job.experienceRequired}</span>}
-              </div>
-            </div>
-
-            {job.skills && job.skills.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {job.skills.map((s, i) => <Badge key={i} variant="secondary" className="font-normal bg-secondary/50">{s}</Badge>)}
-              </div>
-            )}
-
-            {job.description && (
-              <p className="text-sm text-muted-foreground line-clamp-2 bg-muted/30 p-3 rounded-lg border border-border/50">{job.description}</p>
-            )}
-
-            <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border/50">
-              <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-sm">
-                {job.authorName.charAt(0)}
-              </div>
-              <div className="text-xs">
-                <p className="font-medium text-foreground">{job.authorName}</p>
-                <p className="text-muted-foreground">{job.authorExperience} @ {job.authorCompany}</p>
-              </div>
-            </div>
+    <Card className="border-2 border-foreground rounded-none shadow-[6px_6px_0_0_rgba(0,0,0,1)] bg-background">
+      <CardContent className="p-0 flex flex-col h-full">
+        <div className="p-6 flex-1 border-b-2 border-foreground">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-2xl font-bold uppercase tracking-tight">{job.title}</h3>
+            {job.isWalkin && <Badge variant="outline" className="border-2 border-foreground rounded-none uppercase font-bold bg-foreground text-background">Walk-in</Badge>}
           </div>
           
-          <div className="flex flex-col gap-3 w-full md:w-auto min-w-[140px]">
-            <Button className="w-full rounded-xl bg-orange-600 hover:bg-orange-700" asChild>
-              <a href={job.url || "#"} target="_blank" rel="noopener noreferrer">Apply Now</a>
-            </Button>
-            <span className="text-xs text-muted-foreground text-right">{job.posted}</span>
+          <div className="space-y-2 text-sm font-medium uppercase tracking-wider mb-6">
+            <span className="flex items-center gap-2"><Building2 className="h-4 w-4" /> {job.company}</span>
+            <span className="flex items-center gap-2"><MapPin className="h-4 w-4" /> {job.location}</span>
+            <span className="flex items-center gap-2"><Briefcase className="h-4 w-4" /> {job.type}</span>
+            {job.experienceRequired && <span className="flex items-center gap-2"><Clock className="h-4 w-4" /> {job.experienceRequired}</span>}
           </div>
+
+          {job.skills && job.skills.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {job.skills.map((s, i) => <Badge key={i} variant="outline" className="rounded-none border-2 border-foreground uppercase font-bold text-[10px]">{s}</Badge>)}
+            </div>
+          )}
+
+          {job.description && (
+            <p className="text-sm font-medium border-l-4 border-foreground pl-3 py-1 line-clamp-3 italic opacity-80">{job.description}</p>
+          )}
+        </div>
+        
+        <div className="p-4 bg-muted/20 flex items-center justify-between">
+          <div className="text-xs uppercase font-bold tracking-widest">
+            <span className="block opacity-60">Posted By</span>
+            {job.authorName} <span className="opacity-60 font-normal">({job.authorExperience})</span>
+          </div>
+          <Button className="rounded-none border-2 border-foreground font-bold uppercase tracking-widest shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] transition-all" asChild>
+            <a href={job.url || "#"} target="_blank" rel="noopener noreferrer">Apply <ArrowRight className="ml-2 h-4 w-4" /></a>
+          </Button>
         </div>
       </CardContent>
     </Card>
@@ -153,62 +156,63 @@ function JobCard({ job }: { job: Job }) {
 
 function ReferralCard({ referral }: { referral: Referral }) {
   return (
-    <Card className="hover:shadow-md transition-all border-border/60 group rounded-2xl overflow-hidden">
-      <div className="h-1.5 w-full bg-gradient-to-r from-green-400 to-emerald-500"></div>
-      <CardContent className="p-6">
-        <div className="flex flex-col md:flex-row gap-6 justify-between items-start">
-          <div className="space-y-4 flex-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 bg-green-500/10 rounded-full flex items-center justify-center text-green-600 font-bold text-lg border border-green-500/20">
-                  {referral.authorName.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    {referral.authorName} is offering referrals
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{referral.authorExperience} at {referral.authorCompany} • {referral.authorLocation}</p>
-                </div>
-              </div>
-              <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">Referral Available</Badge>
-            </div>
-
-            <div className="bg-muted/30 p-4 rounded-xl border border-border/50 space-y-3">
-              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-                <span className="font-medium">Target Role: <span className="font-normal text-muted-foreground">{referral.role}</span></span>
-                <span className="font-medium">Company: <span className="font-normal text-muted-foreground">{referral.company}</span></span>
-              </div>
-              {referral.experienceRequired && (
-                <div className="text-sm">
-                  <span className="font-medium">Experience Needed:</span> <span className="text-muted-foreground">{referral.experienceRequired}</span>
-                </div>
-              )}
-              {referral.skillsRequired && referral.skillsRequired.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {referral.skillsRequired.map((s, i) => <Badge key={i} variant="outline" className="font-normal text-xs">{s}</Badge>)}
-                </div>
-              )}
-            </div>
-
+    <Card className="border-2 border-foreground rounded-none shadow-[6px_6px_0_0_rgba(0,0,0,1)] bg-background">
+      <CardContent className="p-0">
+        <div className="bg-foreground text-background p-6 flex justify-between items-center">
+          <div>
+            <h3 className="text-xl font-bold uppercase tracking-widest">Referral: {referral.company}</h3>
+            <p className="font-medium uppercase tracking-wider mt-1 opacity-80">{referral.role}</p>
+          </div>
+          <Handshake className="h-8 w-8 opacity-50" />
+        </div>
+        
+        <div className="p-6 border-b-2 border-foreground space-y-6">
+          <div className="grid grid-cols-2 gap-4 text-sm font-medium uppercase tracking-wider">
             <div>
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1 block">Instructions</span>
-              <p className="text-sm text-foreground/80 leading-relaxed">{referral.instructions}</p>
+              <span className="block opacity-60 text-xs mb-1">Target Experience</span>
+              {referral.experienceRequired || "Not specified"}
+            </div>
+            <div>
+              <span className="block opacity-60 text-xs mb-1">Location</span>
+              {referral.location}
+            </div>
+          </div>
+
+          <div>
+            <span className="block opacity-60 text-xs uppercase tracking-widest mb-2 font-bold">Preferred Skills</span>
+            <div className="flex flex-wrap gap-2">
+              {referral.skillsRequired?.map((s, i) => <Badge key={i} variant="outline" className="rounded-none border-2 border-foreground uppercase font-bold text-[10px]">{s}</Badge>)}
+            </div>
+          </div>
+
+          <div className="bg-muted/30 p-4 border-l-4 border-foreground">
+            <span className="block opacity-60 text-xs uppercase tracking-widest mb-1 font-bold">Instructions</span>
+            <p className="text-sm font-medium leading-relaxed">{referral.instructions}</p>
+          </div>
+        </div>
+
+        <div className="p-6 bg-muted/10">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="h-12 w-12 border-2 border-foreground flex items-center justify-center font-bold text-xl uppercase bg-background">
+              {referral.authorName.charAt(0)}
+            </div>
+            <div>
+              <p className="font-bold uppercase tracking-wider text-sm">{referral.authorName}</p>
+              <p className="text-xs uppercase font-medium opacity-60">{referral.authorExperience} @ {referral.authorCompany}</p>
             </div>
           </div>
           
-          <div className="flex flex-col gap-3 w-full md:w-auto min-w-[200px] border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-6">
-            <p className="text-xs font-medium text-center text-muted-foreground mb-1">Contact Referrer</p>
+          <div className="flex gap-4">
             {referral.contactEmail && (
-              <Button variant="outline" className="w-full rounded-xl justify-start gap-2 border-green-500/30 hover:bg-green-500/10" asChild>
-                <a href={`mailto:${referral.contactEmail}`}><Mail className="h-4 w-4 text-green-600" /> Email</a>
+              <Button variant="outline" className="flex-1 rounded-none border-2 border-foreground font-bold uppercase tracking-widest hover:bg-foreground hover:text-background" asChild>
+                <a href={`mailto:${referral.contactEmail}`}><Mail className="mr-2 h-4 w-4" /> Email</a>
               </Button>
             )}
             {referral.contactLinkedin && (
-              <Button variant="outline" className="w-full rounded-xl justify-start gap-2 border-blue-500/30 hover:bg-blue-500/10" asChild>
-                <a href={referral.contactLinkedin} target="_blank" rel="noopener noreferrer"><Linkedin className="h-4 w-4 text-blue-600" /> LinkedIn</a>
+              <Button variant="outline" className="flex-1 rounded-none border-2 border-foreground font-bold uppercase tracking-widest hover:bg-foreground hover:text-background" asChild>
+                <a href={referral.contactLinkedin} target="_blank" rel="noopener noreferrer"><Linkedin className="mr-2 h-4 w-4" /> Connect</a>
               </Button>
             )}
-            <span className="text-xs text-muted-foreground text-center mt-2">Posted {referral.posted}</span>
           </div>
         </div>
       </CardContent>
@@ -218,49 +222,37 @@ function ReferralCard({ referral }: { referral: Referral }) {
 
 function CultureCard({ culture }: { culture: WorkCulture }) {
   return (
-    <Card className="hover:shadow-md transition-all border-border/60 rounded-2xl overflow-hidden">
-       <div className="h-1.5 w-full bg-gradient-to-r from-pink-400 to-rose-500"></div>
-       <CardContent className="p-6 space-y-6">
-         <div className="flex justify-between items-start">
+    <Card className="border-2 border-foreground rounded-none shadow-[6px_6px_0_0_rgba(0,0,0,1)] bg-background">
+       <CardContent className="p-0">
+         <div className="p-6 border-b-2 border-foreground flex justify-between items-start">
            <div>
-             <h3 className="text-2xl font-bold flex items-center gap-2">
-               <Building2 className="h-5 w-5 text-pink-500" /> {culture.company}
-             </h3>
-             <div className="flex items-center gap-2 mt-2">
-               <div className="flex">
-                 {[1,2,3,4,5].map(star => (
-                   <Star key={star} className={`h-4 w-4 ${star <= culture.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'}`} />
-                 ))}
-               </div>
-               <span className="font-semibold">{culture.rating}/5</span>
-             </div>
+             <h3 className="text-2xl font-black uppercase tracking-tighter">{culture.company}</h3>
+             <p className="text-xs font-bold uppercase tracking-widest opacity-60 mt-1">Review by {culture.authorName}</p>
            </div>
-           
-           <div className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-full border border-border/50">
-              <span className="text-xs text-muted-foreground">Reviewed by</span>
-              <span className="text-xs font-semibold">{culture.authorName}</span>
+           <div className="bg-foreground text-background px-4 py-2 font-black text-xl border-2 border-transparent">
+             {culture.rating}<span className="text-sm opacity-80">/5</span>
            </div>
          </div>
 
-         <div className="grid md:grid-cols-2 gap-4">
-           <div className="bg-green-500/5 border border-green-500/20 p-4 rounded-xl">
-             <h4 className="text-green-600 font-semibold text-sm mb-2 uppercase tracking-wider flex items-center gap-1.5"><Heart className="h-3.5 w-3.5" /> Pros</h4>
-             <p className="text-sm text-foreground/80">{culture.pros || "Not provided"}</p>
+         <div className="grid grid-cols-1 md:grid-cols-2 divide-y-2 md:divide-y-0 md:divide-x-2 divide-foreground border-b-2 border-foreground">
+           <div className="p-6 bg-muted/10">
+             <h4 className="font-black uppercase tracking-widest text-lg mb-3 flex items-center gap-2"><Heart className="h-5 w-5" /> Pros</h4>
+             <p className="text-sm font-medium leading-relaxed italic border-l-2 border-foreground pl-3">{culture.pros || "Not provided"}</p>
            </div>
-           <div className="bg-red-500/5 border border-red-500/20 p-4 rounded-xl">
-             <h4 className="text-red-500 font-semibold text-sm mb-2 uppercase tracking-wider">Cons</h4>
-             <p className="text-sm text-foreground/80">{culture.cons || "Not provided"}</p>
+           <div className="p-6 bg-muted/10">
+             <h4 className="font-black uppercase tracking-widest text-lg mb-3 flex items-center gap-2">Cons</h4>
+             <p className="text-sm font-medium leading-relaxed italic border-l-2 border-foreground pl-3">{culture.cons || "Not provided"}</p>
            </div>
          </div>
 
-         <div className="grid md:grid-cols-2 gap-4 pt-4 border-t border-border/50">
-           <div>
-             <span className="text-xs text-muted-foreground block mb-1">Work-Life Balance</span>
-             <p className="text-sm font-medium">{culture.workLifeBalance || "Not provided"}</p>
+         <div className="grid grid-cols-2 divide-x-2 divide-foreground p-6">
+           <div className="pr-4">
+             <span className="text-xs font-bold uppercase tracking-widest block mb-1 opacity-60">Work-Life Balance</span>
+             <p className="text-sm font-bold uppercase">{culture.workLifeBalance || "Not provided"}</p>
            </div>
-           <div>
-             <span className="text-xs text-muted-foreground block mb-1">Management</span>
-             <p className="text-sm font-medium">{culture.management || "Not provided"}</p>
+           <div className="pl-4">
+             <span className="text-xs font-bold uppercase tracking-widest block mb-1 opacity-60">Management</span>
+             <p className="text-sm font-bold uppercase">{culture.management || "Not provided"}</p>
            </div>
          </div>
        </CardContent>
@@ -270,54 +262,41 @@ function CultureCard({ culture }: { culture: WorkCulture }) {
 
 function InterviewCard({ interview }: { interview: Interview }) {
   return (
-    <Card className="hover:shadow-md transition-all border-border/60 rounded-2xl overflow-hidden">
-      <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 to-indigo-500"></div>
-      <CardContent className="p-6 space-y-4">
-        <div className="flex justify-between items-start">
+    <Card className="border-2 border-foreground rounded-none shadow-[6px_6px_0_0_rgba(0,0,0,1)] bg-background">
+      <CardContent className="p-0 flex flex-col md:flex-row">
+        <div className="bg-foreground text-background p-6 md:w-1/3 flex flex-col justify-between border-b-2 md:border-b-0 md:border-r-2 border-foreground">
           <div>
-            <h3 className="text-xl font-bold flex items-center gap-2">
-              {interview.role}
-            </h3>
-            <p className="text-muted-foreground flex items-center gap-1.5 mt-1 font-medium">
-               <Building2 className="h-4 w-4" /> {interview.company} <span className="text-xs px-2 py-0.5 bg-secondary rounded-full ml-2">{interview.level}</span>
-            </p>
+            <div className="flex gap-2 mb-6">
+              <Badge variant="secondary" className="rounded-none uppercase font-bold text-[10px] bg-background text-foreground">{interview.difficulty}</Badge>
+              <Badge variant="outline" className="rounded-none border-background text-background uppercase font-bold text-[10px]">{interview.outcome}</Badge>
+            </div>
+            <h3 className="text-3xl font-black uppercase tracking-tighter leading-none mb-2">{interview.role}</h3>
+            <p className="font-bold uppercase tracking-wider opacity-80">{interview.company}</p>
+            <p className="text-xs uppercase mt-1 opacity-60">Level: {interview.level}</p>
           </div>
-          <div className="flex gap-2">
-             <Badge variant={interview.outcome === 'Offer' ? 'default' : 'secondary'} className={interview.outcome === 'Offer' ? "bg-green-500 hover:bg-green-600" : ""}>{interview.outcome}</Badge>
+          
+          <div className="mt-8 pt-4 border-t border-background/20">
+            <p className="text-xs font-bold uppercase tracking-widest opacity-60 mb-1">Overall Experience</p>
+            <p className="font-black uppercase text-lg">{interview.experience}</p>
           </div>
         </div>
 
-        <div className="flex gap-4 text-sm pt-2">
-          <div className="bg-muted/30 px-3 py-1.5 rounded-lg border border-border/50">
-            <span className="text-muted-foreground text-xs block">Difficulty</span>
-            <span className={`font-semibold ${interview.difficulty === 'Hard' ? 'text-red-500' : interview.difficulty === 'Medium' ? 'text-orange-500' : 'text-green-500'}`}>{interview.difficulty}</span>
-          </div>
-          <div className="bg-muted/30 px-3 py-1.5 rounded-lg border border-border/50">
-            <span className="text-muted-foreground text-xs block">Experience</span>
-            <span className="font-semibold">{interview.experience}</span>
-          </div>
-        </div>
-
-        <div className="space-y-4 pt-4 border-t border-border/50">
+        <div className="p-6 md:w-2/3 space-y-6">
           <div>
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1 block">Process</span>
-            <p className="text-sm text-foreground/80 leading-relaxed bg-muted/20 p-3 rounded-lg">{interview.process}</p>
+            <span className="text-sm font-black uppercase tracking-widest mb-2 block border-b-2 border-foreground pb-2">Interview Process</span>
+            <p className="text-sm font-medium leading-relaxed bg-muted/20 p-4 border-l-4 border-foreground">{interview.process}</p>
           </div>
           <div>
-            <span className="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1 flex items-center gap-1"><MessageSquare className="h-3.5 w-3.5"/> Questions Asked</span>
-            <p className="text-sm text-foreground/80 leading-relaxed bg-blue-500/5 p-3 rounded-lg border border-blue-500/10 whitespace-pre-wrap">{interview.questions}</p>
+            <span className="text-sm font-black uppercase tracking-widest mb-2 block border-b-2 border-foreground pb-2">Questions Asked</span>
+            <p className="text-sm font-medium leading-relaxed bg-muted/20 p-4 border-l-4 border-foreground whitespace-pre-wrap font-mono text-xs">{interview.questions}</p>
           </div>
-        </div>
-        
-        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border/50">
-          <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-sm">
-            {interview.authorName.charAt(0)}
+          
+          <div className="flex items-center justify-between pt-4 border-t-2 border-foreground/20">
+            <div className="text-xs font-bold uppercase tracking-widest">
+              Shared By {interview.authorName} <span className="opacity-60 block mt-1">({interview.authorExperience})</span>
+            </div>
+            <span className="text-xs font-bold uppercase tracking-widest opacity-60">{interview.date}</span>
           </div>
-          <div className="text-xs">
-            <p className="font-medium text-foreground">{interview.authorName}</p>
-            <p className="text-muted-foreground">{interview.authorExperience} @ {interview.authorCompany}</p>
-          </div>
-          <span className="text-xs text-muted-foreground ml-auto">{interview.date}</span>
         </div>
       </CardContent>
     </Card>
@@ -326,66 +305,56 @@ function InterviewCard({ interview }: { interview: Interview }) {
 
 function HrFeedbackCard({ feedback }: { feedback: HrFeedback }) {
   return (
-    <Card className="hover:shadow-md transition-all border-border/60 rounded-2xl overflow-hidden">
-      <div className="h-1.5 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
-      <CardContent className="p-6 space-y-4">
-        <div className="flex justify-between items-start">
+    <Card className="border-2 border-foreground rounded-none shadow-[6px_6px_0_0_rgba(0,0,0,1)] bg-background">
+      <CardContent className="p-0">
+        <div className="p-6 border-b-2 border-foreground flex justify-between items-start bg-muted/20">
           <div>
-            <h3 className="text-xl font-bold flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-purple-500" /> {feedback.company}
-            </h3>
-            <p className="text-muted-foreground flex items-center gap-1.5 mt-1 font-medium text-sm">
-              Feedback on HR: <span className="text-foreground">{feedback.hrName}</span>
-            </p>
+            <h3 className="text-2xl font-black uppercase tracking-tighter">{feedback.company}</h3>
+            <p className="font-bold uppercase tracking-widest text-sm mt-1">HR / Recruiter: <span className="underline">{feedback.hrName}</span></p>
           </div>
           <div className="flex gap-2">
              {feedback.hrEmail && (
-               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-purple-600" asChild>
+               <Button variant="outline" size="icon" className="rounded-none border-2 border-foreground h-10 w-10" asChild>
                  <a href={`mailto:${feedback.hrEmail}`}><Mail className="h-4 w-4" /></a>
                </Button>
              )}
              {feedback.hrLinkedin && (
-               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-blue-600" asChild>
+               <Button variant="outline" size="icon" className="rounded-none border-2 border-foreground h-10 w-10" asChild>
                  <a href={feedback.hrLinkedin} target="_blank" rel="noopener noreferrer"><Linkedin className="h-4 w-4" /></a>
                </Button>
              )}
           </div>
         </div>
 
-        <div className="bg-purple-500/5 p-4 rounded-xl border border-purple-500/20">
-          <span className="text-xs font-bold text-purple-600 uppercase tracking-wider mb-2 block flex items-center gap-1">
-            <ClipboardList className="h-3.5 w-3.5" /> Comments & Experience
+        <div className="p-6">
+          <span className="text-sm font-black uppercase tracking-widest mb-3 block flex items-center gap-2">
+            <ClipboardList className="h-4 w-4" /> Feedback
           </span>
-          <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">{feedback.comments}</p>
+          <p className="text-sm font-medium leading-relaxed italic border-l-4 border-foreground pl-4 whitespace-pre-wrap">{feedback.comments}</p>
         </div>
 
-        <div className="flex flex-wrap gap-4 pt-2">
+        <div className="p-6 border-t-2 border-foreground bg-muted/10 space-y-4">
           {feedback.companyTags && feedback.companyTags.length > 0 && (
-            <div className="space-y-1.5">
-              <span className="text-xs text-muted-foreground block font-medium flex items-center gap-1"><Tag className="h-3 w-3" /> Company Tags</span>
-              <div className="flex flex-wrap gap-1.5">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest opacity-60 block mb-2">Company Tags</span>
+              <div className="flex flex-wrap gap-2">
                 {feedback.companyTags.map((tag, i) => (
-                  <Badge key={i} variant="outline" className="bg-muted/50 text-[10px]">{tag}</Badge>
+                  <Badge key={i} variant="outline" className="rounded-none border-2 border-foreground uppercase font-bold text-[10px]">{tag}</Badge>
                 ))}
               </div>
             </div>
           )}
           
           {feedback.hrTags && feedback.hrTags.length > 0 && (
-            <div className="space-y-1.5">
-              <span className="text-xs text-muted-foreground block font-medium flex items-center gap-1"><Tag className="h-3 w-3" /> HR Tags</span>
-              <div className="flex flex-wrap gap-1.5">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest opacity-60 block mb-2">HR Tags</span>
+              <div className="flex flex-wrap gap-2">
                 {feedback.hrTags.map((tag, i) => (
-                  <Badge key={i} variant="secondary" className="bg-purple-500/10 text-purple-700 hover:bg-purple-500/20 border-transparent text-[10px]">{tag}</Badge>
+                  <Badge key={i} className="rounded-none bg-foreground text-background uppercase font-bold text-[10px]">{tag}</Badge>
                 ))}
               </div>
             </div>
           )}
-        </div>
-
-        <div className="flex items-center gap-2 bg-muted/50 px-3 py-2 rounded-xl border border-border/50 w-max mt-4">
-          <span className="text-xs text-muted-foreground">Shared anonymously by</span>
-          <span className="text-xs font-semibold">{feedback.authorName}</span>
         </div>
       </CardContent>
     </Card>
