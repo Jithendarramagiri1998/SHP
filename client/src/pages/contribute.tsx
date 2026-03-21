@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, MapPin, Briefcase, DollarSign, Users, Sparkles, CheckCircle2 } from "lucide-react";
+import { Building2, MapPin, Briefcase, Users, Sparkles, CheckCircle2, MessageSquare, Handshake, Heart, Mail, Linkedin, Star } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLocation } from "wouter";
 import { useStore } from "@/lib/store";
@@ -14,88 +14,21 @@ import { useStore } from "@/lib/store";
 export default function ContributePage() {
   const [location, setLocation] = useLocation();
   const searchParams = new URLSearchParams(location.split('?')[1]);
-  const defaultTab = searchParams.get('tab') || "job";
-  const editId = searchParams.get('edit');
+  const defaultTab = searchParams.get('tab') || "interview";
   
-  const { profile, jobs, salaries, interviews, addJob, addSalary, addInterview, editJob, editSalary, editInterview } = useStore();
+  const { profile, addInterview, addJob, addReferral, addCulture, addBenefit } = useStore();
   const [submitted, setSubmitted] = useState(false);
-
-  // Find the item to edit if we are in edit mode
-  const editJobItem = editId && defaultTab === 'job' ? jobs.find(j => j.id === editId) : null;
-  const editSalaryItem = editId && defaultTab === 'salary' ? salaries.find(s => s.id === editId) : null;
-  const editInterviewItem = editId && defaultTab === 'interview' ? interviews.find(i => i.id === editId) : null;
-
-  const isEditing = !!(editJobItem || editSalaryItem || editInterviewItem);
-
-  const handleJobSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const offerType = formData.get('offer') as string;
-    
-    const jobData = {
-      title: formData.get('title') as string,
-      company: formData.get('company') as string,
-      location: formData.get('location') as string || 'Remote',
-      type: formData.get('type') as string,
-      isWalkin: offerType === 'walkin',
-      hasReferral: offerType === 'referral',
-      url: formData.get('url') as string,
-      description: formData.get('description') as string,
-      authorId: profile.id,
-      authorName: profile.name,
-      authorCompany: profile.company,
-      authorLocation: profile.location,
-      authorExperience: profile.experience,
-    };
-
-    if (isEditing && editJobItem) {
-      editJob(editJobItem.id, jobData);
-    } else {
-      addJob(jobData);
-    }
-    setSubmitted(true);
-  };
-
-  const handleSalarySubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const skillsStr = formData.get('skills') as string;
-    const skills = skillsStr ? skillsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
-
-    const salaryData = {
-      company: formData.get('company') as string,
-      location: formData.get('location') as string || 'Remote',
-      title: formData.get('title') as string,
-      yoe: Number(formData.get('yoe')) || 0,
-      base: Number(formData.get('base')) || 0,
-      bonus: Number(formData.get('bonus')) || 0,
-      stock: Number(formData.get('stock')) || 0,
-      skills,
-      authorId: profile.id,
-      authorName: profile.name,
-      authorCompany: profile.company,
-      authorLocation: profile.location,
-      authorExperience: profile.experience,
-    };
-
-    if (isEditing && editSalaryItem) {
-      editSalary(editSalaryItem.id, salaryData);
-    } else {
-      addSalary(salaryData);
-    }
-    setSubmitted(true);
-  };
 
   const handleInterviewSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    
-    const interviewData = {
+    addInterview({
       company: formData.get('company') as string,
       role: formData.get('role') as string,
       difficulty: formData.get('difficulty') as string,
       level: formData.get('level') as string,
       outcome: formData.get('outcome') as string,
+      experience: formData.get('experience') as string,
       process: formData.get('process') as string,
       questions: formData.get('questions') as string,
       authorId: profile.id,
@@ -103,13 +36,74 @@ export default function ContributePage() {
       authorCompany: profile.company,
       authorLocation: profile.location,
       authorExperience: profile.experience,
-    };
+    });
+    setSubmitted(true);
+  };
 
-    if (isEditing && editInterviewItem) {
-      editInterview(editInterviewItem.id, interviewData);
-    } else {
-      addInterview(interviewData);
-    }
+  const handleJobSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const offerType = formData.get('offer') as string;
+    const skillsStr = formData.get('skills') as string;
+    const skills = skillsStr ? skillsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+    
+    addJob({
+      title: formData.get('title') as string,
+      company: formData.get('company') as string,
+      location: formData.get('location') as string || 'Remote',
+      type: formData.get('type') as string,
+      isWalkin: offerType === 'walkin',
+      skills: skills,
+      experienceRequired: formData.get('experienceRequired') as string,
+      url: formData.get('url') as string,
+      description: formData.get('description') as string,
+      authorId: profile.id,
+      authorName: profile.name,
+      authorCompany: profile.company,
+      authorLocation: profile.location,
+      authorExperience: profile.experience,
+    });
+    setSubmitted(true);
+  };
+
+  const handleReferralSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const skillsStr = formData.get('skills') as string;
+    const skills = skillsStr ? skillsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+    
+    addReferral({
+      company: formData.get('company') as string,
+      role: formData.get('role') as string,
+      location: formData.get('location') as string || 'Remote',
+      skillsRequired: skills,
+      experienceRequired: formData.get('experienceRequired') as string,
+      instructions: formData.get('instructions') as string,
+      authorId: profile.id,
+      authorName: profile.name,
+      authorCompany: profile.company,
+      authorLocation: profile.location,
+      authorExperience: profile.experience,
+      contactEmail: formData.get('contactEmail') as string,
+      contactLinkedin: formData.get('contactLinkedin') as string,
+    });
+    setSubmitted(true);
+  };
+
+  const handleCultureSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    
+    addCulture({
+      company: formData.get('company') as string,
+      rating: Number(formData.get('rating')) || 0,
+      pros: formData.get('pros') as string,
+      cons: formData.get('cons') as string,
+      workLifeBalance: formData.get('workLifeBalance') as string,
+      management: formData.get('management') as string,
+      authorId: profile.id,
+      authorName: profile.name,
+    });
     setSubmitted(true);
   };
 
@@ -117,21 +111,20 @@ export default function ContributePage() {
     return (
       <div className="min-h-screen bg-muted/20">
         <Navbar />
-        <main className="container mx-auto py-16 px-4 md:px-6 max-w-2xl text-center">
-          <Card className="border-border/60 shadow-lg py-12">
-            <CardContent className="flex flex-col items-center space-y-6">
-              <div className="h-20 w-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-2">
-                <CheckCircle2 className="h-10 w-10" />
+        <main className="container mx-auto py-16 px-4 md:px-6 max-w-2xl text-center animate-in fade-in zoom-in duration-500">
+          <Card className="border-border/60 shadow-xl py-12 bg-card relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 pointer-events-none" />
+            <CardContent className="flex flex-col items-center space-y-6 relative z-10">
+              <div className="h-24 w-24 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mb-2 shadow-inner">
+                <CheckCircle2 className="h-12 w-12" />
               </div>
-              <h2 className="text-3xl font-bold">{isEditing ? "Update Saved!" : "Contribution Received!"}</h2>
+              <h2 className="text-4xl font-bold tracking-tight text-foreground">Contribution Saved!</h2>
               <p className="text-muted-foreground text-lg max-w-md">
-                {isEditing 
-                  ? "Your changes have been successfully updated." 
-                  : "Thank you for sharing with the CareerDoor community. Your contribution helps others in their career journey."}
+                Thank you for sharing with the CareerDoor community. Your insights help others navigate their career journeys.
               </p>
-              <div className="pt-6 flex gap-4 justify-center">
-                {!isEditing && <Button onClick={() => setSubmitted(false)} variant="outline">Add Another</Button>}
-                <Button onClick={() => setLocation("/profile")}>View My Contributions</Button>
+              <div className="pt-8 flex flex-col sm:flex-row gap-4 justify-center w-full max-w-sm">
+                <Button onClick={() => setSubmitted(false)} variant="outline" className="w-full h-12 text-base">Add Another</Button>
+                <Button onClick={() => setLocation("/profile")} className="w-full h-12 text-base bg-gradient-to-r from-primary to-purple-600 hover:opacity-90 transition-opacity border-0">View My Profile</Button>
               </div>
             </CardContent>
           </Card>
@@ -141,264 +134,93 @@ export default function ContributePage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/20">
+    <div className="min-h-screen bg-muted/20 pb-20">
       <Navbar />
       
-      <main className="container mx-auto py-8 px-4 md:px-6 max-w-4xl">
-        <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-              <Sparkles className="h-8 w-8 text-primary" /> {isEditing ? "Edit Contribution" : "Share with the Community"}
-            </h1>
-            <p className="text-muted-foreground mt-2 text-lg">
-              {isEditing ? "Update the details of your previous contribution." : "Help others by sharing jobs from your company, your salary, or your interview experiences."}
-            </p>
-          </div>
-          {isEditing && (
-            <Button variant="outline" onClick={() => setLocation('/profile')} className="mt-4 md:mt-0">
-              Cancel Edit
-            </Button>
-          )}
+      <main className="container mx-auto mt-8 px-4 md:px-6 max-w-4xl">
+        <div className="mb-10 text-center md:text-left">
+          <h1 className="text-4xl font-bold tracking-tight flex items-center justify-center md:justify-start gap-3">
+            <Sparkles className="h-8 w-8 text-primary" /> Contribute
+          </h1>
+          <p className="text-muted-foreground mt-3 text-lg max-w-2xl">Share your knowledge and help build a more transparent professional community.</p>
         </div>
 
-        <Tabs defaultValue={defaultTab} className="space-y-6">
-          {!isEditing && (
-            <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 h-auto p-1">
-              <TabsTrigger value="job" className="py-3 text-base gap-2">
-                <Briefcase className="h-4 w-4" /> Add Job / Referral
-              </TabsTrigger>
-              <TabsTrigger value="salary" className="py-3 text-base gap-2">
-                <DollarSign className="h-4 w-4" /> Share Salary
-              </TabsTrigger>
-              <TabsTrigger value="interview" className="py-3 text-base gap-2">
-                <Users className="h-4 w-4" /> Interview Insight
-              </TabsTrigger>
-            </TabsList>
-          )}
+        <Tabs defaultValue={defaultTab} className="space-y-8">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-1.5 bg-card border rounded-2xl shadow-sm">
+            <TabsTrigger value="interview" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary transition-all">
+              <MessageSquare className="h-4 w-4" /> <span className="hidden md:inline">Interview</span> Exp
+            </TabsTrigger>
+            <TabsTrigger value="job" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-600 transition-all">
+              <Briefcase className="h-4 w-4" /> <span className="hidden md:inline">Job</span> Postings
+            </TabsTrigger>
+            <TabsTrigger value="referral" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-green-500/10 data-[state=active]:text-green-600 transition-all">
+              <Handshake className="h-4 w-4" /> Referrals
+            </TabsTrigger>
+            <TabsTrigger value="culture" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 transition-all">
+              <Heart className="h-4 w-4" /> Culture
+            </TabsTrigger>
+          </TabsList>
 
-          <TabsContent value="job" className="m-0">
-            <Card className="border-border/60 shadow-md">
-              <CardHeader className="bg-secondary/30 border-b pb-6">
-                <CardTitle className="text-2xl">{isEditing ? "Edit Job" : "Post a Job or Offer a Referral"}</CardTitle>
+          {/* INTERVIEW TAB */}
+          <TabsContent value="interview" className="m-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <Card className="border-border/60 shadow-lg rounded-2xl overflow-hidden">
+              <div className="h-2 w-full bg-gradient-to-r from-blue-500 to-primary"></div>
+              <CardHeader className="bg-card pb-6">
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <MessageSquare className="h-6 w-6 text-blue-500" /> Share Interview Experience
+                </CardTitle>
+                <CardDescription className="text-base mt-2">What did they ask? How was the process? Help others prepare.</CardDescription>
               </CardHeader>
-              <CardContent className="p-6 md:p-8">
-                <form onSubmit={handleJobSubmit} className="space-y-6">
+              <CardContent className="p-6 md:p-8 bg-card">
+                <form onSubmit={handleInterviewSubmit} className="space-y-8">
                   
                   <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="job-company" className="text-sm font-semibold">Company Name *</Label>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Company Name <span className="text-destructive">*</span></Label>
                       <div className="relative">
-                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="job-company" name="company" defaultValue={editJobItem?.company || profile.company} className="pl-9" required />
+                        <Building2 className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
+                        <Input name="company" defaultValue={profile.company} className="pl-10 h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
                       </div>
                     </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="job-location" className="text-sm font-semibold">Location</Label>
-                      <div className="relative">
-                        <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="job-location" name="location" defaultValue={editJobItem?.location || profile.location} className="pl-9" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="job-title" className="text-sm font-semibold">Job Title *</Label>
-                    <Input id="job-title" name="title" defaultValue={editJobItem?.title} placeholder="e.g. Senior Frontend Engineer" required />
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                     <div className="space-y-2">
-                        <Label htmlFor="job-type" className="text-sm font-semibold">Job Type *</Label>
-                        <Select name="type" required defaultValue={editJobItem?.type || "Full-time"}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Full-time">Full-time</SelectItem>
-                            <SelectItem value="Contract">Contract</SelectItem>
-                            <SelectItem value="Internship">Internship</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="job-offer" className="text-sm font-semibold">What are you offering? *</Label>
-                        <Select name="offer" required defaultValue={editJobItem ? (editJobItem.isWalkin ? "walkin" : editJobItem.hasReferral ? "referral" : "link") : "referral"}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select option" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="referral">I can refer someone</SelectItem>
-                            <SelectItem value="link">Just sharing the application link</SelectItem>
-                            <SelectItem value="walkin">Sharing a Walk-in Drive</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="job-url" className="text-sm font-semibold">Job URL / Link</Label>
-                    <Input id="job-url" name="url" defaultValue={editJobItem?.url} type="url" placeholder="https://..." />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="job-desc" className="text-sm font-semibold">Additional Details or Instructions</Label>
-                    <Textarea 
-                      id="job-desc" 
-                      name="description"
-                      defaultValue={editJobItem?.description}
-                      placeholder="e.g. DM me your resume if interested. Looking for 3+ years experience with React." 
-                      className="min-h-[100px]"
-                    />
-                  </div>
-                  
-                  <div className="pt-4 flex justify-end">
-                    <Button type="submit" size="lg" className="px-8">{isEditing ? "Save Changes" : "Post Job"}</Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="salary" className="m-0">
-            <Card className="border-border/60 shadow-md">
-              <CardHeader className="bg-secondary/30 border-b pb-6">
-                <CardTitle className="text-2xl">{isEditing ? "Edit Salary Insight" : "Contribute Salary Insight"}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 md:p-8">
-                <form onSubmit={handleSalarySubmit} className="space-y-6">
-                  
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="sal-company" className="text-sm font-semibold">Company Name *</Label>
-                      <div className="relative">
-                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="sal-company" name="company" defaultValue={editSalaryItem?.company || profile.company} className="pl-9" required />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="sal-location" className="text-sm font-semibold">Location</Label>
-                      <div className="relative">
-                        <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="sal-location" name="location" defaultValue={editSalaryItem?.location || profile.location} className="pl-9" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                     <div className="space-y-2">
-                        <Label htmlFor="sal-title" className="text-sm font-semibold">Job Title *</Label>
-                        <Input id="sal-title" name="title" defaultValue={editSalaryItem?.title} placeholder="e.g. Product Designer" required />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="sal-yoe" className="text-sm font-semibold">Years of Experience</Label>
-                        <Input id="sal-yoe" name="yoe" type="number" defaultValue={editSalaryItem?.yoe} placeholder="e.g. 5" min="0" />
-                      </div>
-                  </div>
-
-                  <div className="space-y-4 p-5 bg-muted/30 rounded-xl border border-border">
-                    <h3 className="font-semibold text-lg">Compensation Details</h3>
-                    <div className="grid md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="sal-base" className="text-sm">Base Salary (/yr) *</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
-                          <Input id="sal-base" name="base" type="number" defaultValue={editSalaryItem?.base} placeholder="120000" className="pl-7" required />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="sal-bonus" className="text-sm">Bonus (/yr)</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
-                          <Input id="sal-bonus" name="bonus" type="number" defaultValue={editSalaryItem?.bonus} placeholder="15000" className="pl-7" />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="sal-stock" className="text-sm">Stock/Equity (/yr)</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
-                          <Input id="sal-stock" name="stock" type="number" defaultValue={editSalaryItem?.stock} placeholder="30000" className="pl-7" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="sal-skills" className="text-sm font-semibold">Primary Skills/Tech Stack</Label>
-                    <Input id="sal-skills" name="skills" defaultValue={editSalaryItem?.skills?.join(', ')} placeholder="e.g. Figma, Framer, User Research" />
-                    <p className="text-xs text-muted-foreground">Comma separated</p>
-                  </div>
-                  
-                  <div className="pt-4 flex justify-between items-center">
-                    <p className="text-sm text-muted-foreground flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-green-500"></span>
-                      Your submission will be anonymous
-                    </p>
-                    <Button type="submit" size="lg" className="px-8">{isEditing ? "Save Changes" : "Submit Salary"}</Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="interview" className="m-0">
-            <Card className="border-border/60 shadow-md">
-              <CardHeader className="bg-secondary/30 border-b pb-6">
-                <CardTitle className="text-2xl">{isEditing ? "Edit Interview Experience" : "Share Interview Experience"}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 md:p-8">
-                <form onSubmit={handleInterviewSubmit} className="space-y-6">
-                  
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="int-company" className="text-sm font-semibold">Company Name *</Label>
-                      <div className="relative">
-                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="int-company" name="company" defaultValue={editInterviewItem?.company || profile.company} className="pl-9" required />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="int-role" className="text-sm font-semibold">Role Interviewed For *</Label>
-                      <Input id="int-role" name="role" defaultValue={editInterviewItem?.role} placeholder="e.g. Software Development Engineer II" required />
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Role Interviewed For <span className="text-destructive">*</span></Label>
+                      <Input name="role" placeholder="e.g. Senior Frontend Engineer" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-6">
-                     <div className="space-y-2">
-                        <Label htmlFor="int-difficulty" className="text-sm font-semibold">Difficulty</Label>
-                        <Select name="difficulty" defaultValue={editInterviewItem?.difficulty || "Medium"}>
-                          <SelectTrigger>
+                     <div className="space-y-3">
+                        <Label className="text-sm font-semibold text-foreground/80">Interview Level <span className="text-destructive">*</span></Label>
+                        <Select name="level" defaultValue="L2">
+                          <SelectTrigger className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Easy">Easy</SelectItem>
-                            <SelectItem value="Medium">Medium</SelectItem>
-                            <SelectItem value="Hard">Hard</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="int-level" className="text-sm font-semibold">Level (if applicable)</Label>
-                        <Select name="level" defaultValue={editInterviewItem?.level || "L2"}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select" />
-                          </SelectTrigger>
-                          <SelectContent>
+                            <SelectItem value="Intern">Intern / Fresher</SelectItem>
                             <SelectItem value="L1">Entry / L1</SelectItem>
                             <SelectItem value="L2">Mid / L2</SelectItem>
-                            <SelectItem value="L3">Senior / L3+</SelectItem>
+                            <SelectItem value="L3">Senior / L3</SelectItem>
+                            <SelectItem value="L4">Staff / L4+</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="int-outcome" className="text-sm font-semibold">Offer Status</Label>
-                        <Select name="outcome" defaultValue={editInterviewItem?.outcome || "Pending"}>
-                          <SelectTrigger>
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold text-foreground/80">Overall Experience <span className="text-destructive">*</span></Label>
+                        <Select name="experience" defaultValue="Positive">
+                          <SelectTrigger className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Positive">Positive</SelectItem>
+                            <SelectItem value="Neutral">Neutral</SelectItem>
+                            <SelectItem value="Negative">Negative</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold text-foreground/80">Offer Status <span className="text-destructive">*</span></Label>
+                        <Select name="outcome" defaultValue="Pending">
+                          <SelectTrigger className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors">
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
@@ -410,37 +232,268 @@ export default function ContributePage() {
                       </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="int-process" className="text-sm font-semibold">Interview Process Overview *</Label>
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-foreground/80">Interview Process <span className="text-destructive">*</span></Label>
                     <Textarea 
-                      id="int-process" 
                       name="process"
-                      defaultValue={editInterviewItem?.process}
-                      placeholder="e.g. 1 Phone screen with recruiter, followed by 4 rounds of virtual onsite (2 coding, 1 system design, 1 behavioral)." 
-                      className="min-h-[100px]"
+                      placeholder="Describe the rounds (e.g. 1 Phone screen, 2 Coding, 1 System Design). How long did it take?" 
+                      className="min-h-[120px] rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors resize-none"
                       required
                     />
                   </div>
 
-                  <div className="space-y-2 bg-primary/5 p-4 rounded-lg border border-primary/20">
-                    <Label htmlFor="int-questions" className="text-sm font-semibold text-primary">Questions Asked & Suggestions *</Label>
+                  <div className="space-y-3 bg-blue-500/5 p-6 rounded-2xl border border-blue-500/20">
+                    <Label className="text-sm font-semibold text-blue-600 dark:text-blue-400">Questions Asked <span className="text-destructive">*</span></Label>
                     <Textarea 
-                      id="int-questions" 
                       name="questions"
-                      defaultValue={editInterviewItem?.questions}
-                      placeholder="What were the specific questions? E.g., 'Design a rate limiter' or 'Tell me about a time you disagreed with a manager.' Any tips for future candidates?" 
-                      className="min-h-[150px] bg-background"
+                      placeholder="List the specific technical or behavioral questions you were asked." 
+                      className="min-h-[150px] rounded-xl bg-background border-border/50 resize-none"
                       required
                     />
                   </div>
                   
-                  <div className="pt-4 flex justify-end">
-                    <Button type="submit" size="lg" className="px-8">{isEditing ? "Save Changes" : "Submit Experience"}</Button>
+                  <div className="pt-6 flex justify-end border-t border-border/50">
+                    <Button type="submit" size="lg" className="px-8 h-12 rounded-xl text-base bg-blue-600 hover:bg-blue-700">Submit Experience</Button>
                   </div>
                 </form>
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* JOB TAB */}
+          <TabsContent value="job" className="m-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <Card className="border-border/60 shadow-lg rounded-2xl overflow-hidden">
+              <div className="h-2 w-full bg-gradient-to-r from-orange-400 to-red-500"></div>
+              <CardHeader className="bg-card pb-6">
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <Briefcase className="h-6 w-6 text-orange-500" /> Post a Job or Walk-in
+                </CardTitle>
+                <CardDescription className="text-base mt-2">Help the community by sharing active openings or walk-in drives.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 md:p-8 bg-card">
+                <form onSubmit={handleJobSubmit} className="space-y-8">
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Job Title <span className="text-destructive">*</span></Label>
+                      <Input name="title" placeholder="e.g. Backend Developer" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Company <span className="text-destructive">*</span></Label>
+                      <div className="relative">
+                        <Building2 className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
+                        <Input name="company" defaultValue={profile.company} className="pl-10 h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Location <span className="text-destructive">*</span></Label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
+                        <Input name="location" defaultValue="Remote" className="pl-10 h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Experience Required</Label>
+                      <Input name="experienceRequired" placeholder="e.g. 2-4 YOE" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Posting Type <span className="text-destructive">*</span></Label>
+                      <Select name="offer" defaultValue="job">
+                        <SelectTrigger className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors">
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="job">Standard Job Opening</SelectItem>
+                          <SelectItem value="walkin">Walk-in Drive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-foreground/80">Key Skills Required</Label>
+                    <Input name="skills" placeholder="e.g. React, Node.js, AWS (comma separated)" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-foreground/80">Job Description / Instructions</Label>
+                    <Textarea 
+                      name="description"
+                      placeholder="Provide details about the role, responsibilities, or specific instructions for walk-ins." 
+                      className="min-h-[120px] rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors resize-none"
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-foreground/80">Application URL</Label>
+                    <Input name="url" type="url" placeholder="https://..." className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                  </div>
+                  
+                  <div className="pt-6 flex justify-end border-t border-border/50">
+                    <Button type="submit" size="lg" className="px-8 h-12 rounded-xl text-base bg-orange-600 hover:bg-orange-700">Post Job</Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* REFERRAL TAB */}
+          <TabsContent value="referral" className="m-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+             <Card className="border-border/60 shadow-lg rounded-2xl overflow-hidden">
+              <div className="h-2 w-full bg-gradient-to-r from-green-400 to-emerald-500"></div>
+              <CardHeader className="bg-card pb-6">
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <Handshake className="h-6 w-6 text-green-500" /> Offer a Referral
+                </CardTitle>
+                <CardDescription className="text-base mt-2">Help someone get their foot in the door at your company.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 md:p-8 bg-card">
+                <form onSubmit={handleReferralSubmit} className="space-y-8">
+                  
+                  <div className="p-6 bg-green-500/5 rounded-2xl border border-green-500/20 mb-6 flex flex-col md:flex-row gap-6 items-center">
+                    <div className="h-16 w-16 bg-background rounded-full shadow-sm flex items-center justify-center text-2xl font-bold text-green-600 border border-border">
+                      {profile.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 text-center md:text-left space-y-1">
+                      <p className="text-sm text-green-600 font-semibold uppercase tracking-wider">Referrer Profile</p>
+                      <p className="text-lg font-medium">{profile.name}</p>
+                      <p className="text-sm text-muted-foreground">{profile.experience} at {profile.company} • {profile.location}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Company <span className="text-destructive">*</span></Label>
+                      <Input name="company" defaultValue={profile.company} className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Role(s) you can refer for <span className="text-destructive">*</span></Label>
+                      <Input name="role" placeholder="e.g. Any Software Engineering roles" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Target Experience Level</Label>
+                      <Input name="experienceRequired" placeholder="e.g. 3+ Years" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Preferred Skills</Label>
+                      <Input name="skills" placeholder="e.g. Python, React (comma separated)" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-foreground/80">How should candidates contact you? <span className="text-destructive">*</span></Label>
+                    <Textarea 
+                      name="instructions"
+                      placeholder="e.g. Please email me your resume and the specific job ID link. Tell me briefly why you're a good fit." 
+                      className="min-h-[100px] rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors resize-none"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6 pt-2">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80 flex items-center gap-2">
+                        <Mail className="h-4 w-4" /> Contact Email
+                      </Label>
+                      <Input name="contactEmail" type="email" defaultValue={profile.email} placeholder="Will be hidden until requested" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80 flex items-center gap-2">
+                        <Linkedin className="h-4 w-4" /> LinkedIn URL
+                      </Label>
+                      <Input name="contactLinkedin" defaultValue={profile.linkedin} placeholder="https://linkedin.com/in/..." className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                    </div>
+                  </div>
+                  
+                  <div className="pt-6 flex justify-end border-t border-border/50">
+                    <Button type="submit" size="lg" className="px-8 h-12 rounded-xl text-base bg-green-600 hover:bg-green-700">Submit Referral Offer</Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* CULTURE TAB */}
+          <TabsContent value="culture" className="m-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+             <Card className="border-border/60 shadow-lg rounded-2xl overflow-hidden">
+              <div className="h-2 w-full bg-gradient-to-r from-pink-400 to-rose-500"></div>
+              <CardHeader className="bg-card pb-6">
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <Heart className="h-6 w-6 text-pink-500" /> Culture & Benefits
+                </CardTitle>
+                <CardDescription className="text-base mt-2">Give an inside look into what it's really like to work there.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 md:p-8 bg-card">
+                <form onSubmit={handleCultureSubmit} className="space-y-8">
+                  
+                  <div className="grid md:grid-cols-2 gap-6 items-end">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Company <span className="text-destructive">*</span></Label>
+                      <Input name="company" defaultValue={profile.company} className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Overall Rating (1-5) <span className="text-destructive">*</span></Label>
+                      <Select name="rating" defaultValue="4">
+                        <SelectTrigger className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors">
+                          <SelectValue placeholder="Rating" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[5,4,3,2,1].map(num => (
+                            <SelectItem key={num} value={num.toString()}>
+                              <div className="flex items-center">
+                                {num} <Star className="h-3 w-3 ml-1 fill-yellow-400 text-yellow-400" />
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80 text-green-600">Pros / What's Great</Label>
+                      <Textarea 
+                        name="pros"
+                        placeholder="e.g. Great engineering culture, unlimited PTO that is actually respected." 
+                        className="min-h-[100px] rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors resize-none"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80 text-red-500">Cons / What Needs Work</Label>
+                      <Textarea 
+                        name="cons"
+                        placeholder="e.g. Promotion cycles are slow, heavy meeting load." 
+                        className="min-h-[100px] rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Work-Life Balance</Label>
+                      <Input name="workLifeBalance" placeholder="e.g. 40 hrs/week, rare weekends" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Management Style</Label>
+                      <Input name="management" placeholder="e.g. Supportive, Micro-managing" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                    </div>
+                  </div>
+                  
+                  <div className="pt-6 flex justify-end border-t border-border/50">
+                    <Button type="submit" size="lg" className="px-8 h-12 rounded-xl text-base bg-pink-600 hover:bg-pink-700">Submit Review</Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
         </Tabs>
       </main>
     </div>
