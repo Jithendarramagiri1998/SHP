@@ -11,6 +11,7 @@ import JobsPage from "@/pages/jobs";
 import CompaniesPage from "@/pages/companies";
 import SalariesPage from "@/pages/salaries";
 import InterviewsPage from "@/pages/interviews";
+import ContributePage from "@/pages/contribute";
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/companies" component={CompaniesPage} />
       <Route path="/salaries" component={SalariesPage} />
       <Route path="/interviews" component={InterviewsPage} />
+      <Route path="/contribute" component={ContributePage} />
       <Route component={NotFound} />
     </Switch>
   );
