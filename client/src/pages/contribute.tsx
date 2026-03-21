@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, MapPin, Briefcase, Users, Sparkles, CheckCircle2, MessageSquare, Handshake, Heart, Mail, Linkedin, Star } from "lucide-react";
+import { Building2, MapPin, Briefcase, Users, Sparkles, CheckCircle2, MessageSquare, Handshake, Heart, Mail, Linkedin, Star, ClipboardList } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLocation } from "wouter";
 import { useStore } from "@/lib/store";
@@ -16,7 +16,7 @@ export default function ContributePage() {
   const searchParams = new URLSearchParams(location.split('?')[1]);
   const defaultTab = searchParams.get('tab') || "interview";
   
-  const { profile, addInterview, addJob, addReferral, addCulture, addBenefit } = useStore();
+  const { profile, addInterview, addJob, addReferral, addCulture, addHrFeedback } = useStore();
   const [submitted, setSubmitted] = useState(false);
 
   const handleInterviewSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -107,6 +107,28 @@ export default function ContributePage() {
     setSubmitted(true);
   };
 
+  const handleHrFeedbackSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const companyTagsStr = formData.get('companyTags') as string;
+    const companyTags = companyTagsStr ? companyTagsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const hrTagsStr = formData.get('hrTags') as string;
+    const hrTags = hrTagsStr ? hrTagsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+    
+    addHrFeedback({
+      company: formData.get('company') as string,
+      hrName: formData.get('hrName') as string,
+      hrEmail: formData.get('hrEmail') as string,
+      hrLinkedin: formData.get('hrLinkedin') as string,
+      comments: formData.get('comments') as string,
+      companyTags,
+      hrTags,
+      authorId: profile.id,
+      authorName: profile.name,
+    });
+    setSubmitted(true);
+  };
+
   if (submitted) {
     return (
       <div className="min-h-screen bg-muted/20">
@@ -146,7 +168,7 @@ export default function ContributePage() {
         </div>
 
         <Tabs defaultValue={defaultTab} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-1.5 bg-card border rounded-2xl shadow-sm">
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 h-auto p-1.5 bg-card border rounded-2xl shadow-sm">
             <TabsTrigger value="interview" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary transition-all">
               <MessageSquare className="h-4 w-4" /> <span className="hidden md:inline">Interview</span> Exp
             </TabsTrigger>
@@ -158,6 +180,9 @@ export default function ContributePage() {
             </TabsTrigger>
             <TabsTrigger value="culture" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 transition-all">
               <Heart className="h-4 w-4" /> Culture
+            </TabsTrigger>
+            <TabsTrigger value="hrfeedback" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-purple-500/10 data-[state=active]:text-purple-600 transition-all">
+              <ClipboardList className="h-4 w-4" /> HR Feedback
             </TabsTrigger>
           </TabsList>
 
@@ -405,14 +430,14 @@ export default function ContributePage() {
                     </div>
                     <div className="space-y-3">
                       <Label className="text-sm font-semibold text-foreground/80 flex items-center gap-2">
-                        <Linkedin className="h-4 w-4" /> LinkedIn URL
+                        <Linkedin className="h-4 w-4" /> LinkedIn Profile
                       </Label>
-                      <Input name="contactLinkedin" defaultValue={profile.linkedin} placeholder="https://linkedin.com/in/..." className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                      <Input name="contactLinkedin" type="url" defaultValue={profile.linkedin} placeholder="https://linkedin.com/in/..." className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
                     </div>
                   </div>
                   
                   <div className="pt-6 flex justify-end border-t border-border/50">
-                    <Button type="submit" size="lg" className="px-8 h-12 rounded-xl text-base bg-green-600 hover:bg-green-700">Submit Referral Offer</Button>
+                    <Button type="submit" size="lg" className="px-8 h-12 rounded-xl text-base bg-green-600 hover:bg-green-700">Offer Referral</Button>
                   </div>
                 </form>
               </CardContent>
@@ -425,14 +450,14 @@ export default function ContributePage() {
               <div className="h-2 w-full bg-gradient-to-r from-pink-400 to-rose-500"></div>
               <CardHeader className="bg-card pb-6">
                 <CardTitle className="text-2xl flex items-center gap-2">
-                  <Heart className="h-6 w-6 text-pink-500" /> Culture & Benefits
+                  <Heart className="h-6 w-6 text-pink-500" /> Share Culture & Benefits
                 </CardTitle>
-                <CardDescription className="text-base mt-2">Give an inside look into what it's really like to work there.</CardDescription>
+                <CardDescription className="text-base mt-2">What's it really like to work there? Tell the community.</CardDescription>
               </CardHeader>
               <CardContent className="p-6 md:p-8 bg-card">
                 <form onSubmit={handleCultureSubmit} className="space-y-8">
                   
-                  <div className="grid md:grid-cols-2 gap-6 items-end">
+                  <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       <Label className="text-sm font-semibold text-foreground/80">Company <span className="text-destructive">*</span></Label>
                       <Input name="company" defaultValue={profile.company} className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
@@ -441,16 +466,14 @@ export default function ContributePage() {
                       <Label className="text-sm font-semibold text-foreground/80">Overall Rating (1-5) <span className="text-destructive">*</span></Label>
                       <Select name="rating" defaultValue="4">
                         <SelectTrigger className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors">
-                          <SelectValue placeholder="Rating" />
+                          <SelectValue placeholder="Select rating" />
                         </SelectTrigger>
                         <SelectContent>
-                          {[5,4,3,2,1].map(num => (
-                            <SelectItem key={num} value={num.toString()}>
-                              <div className="flex items-center">
-                                {num} <Star className="h-3 w-3 ml-1 fill-yellow-400 text-yellow-400" />
-                              </div>
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="5">5 - Excellent</SelectItem>
+                          <SelectItem value="4">4 - Good</SelectItem>
+                          <SelectItem value="3">3 - Average</SelectItem>
+                          <SelectItem value="2">2 - Poor</SelectItem>
+                          <SelectItem value="1">1 - Terrible</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -458,19 +481,21 @@ export default function ContributePage() {
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <Label className="text-sm font-semibold text-foreground/80 text-green-600">Pros / What's Great</Label>
+                      <Label className="text-sm font-semibold text-green-600 dark:text-green-400">Pros <span className="text-destructive">*</span></Label>
                       <Textarea 
                         name="pros"
-                        placeholder="e.g. Great engineering culture, unlimited PTO that is actually respected." 
-                        className="min-h-[100px] rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors resize-none"
+                        placeholder="What are the best parts of working here?" 
+                        className="min-h-[120px] rounded-xl bg-green-500/5 border-green-500/20 focus:bg-background transition-colors resize-none"
+                        required
                       />
                     </div>
                     <div className="space-y-3">
-                      <Label className="text-sm font-semibold text-foreground/80 text-red-500">Cons / What Needs Work</Label>
+                      <Label className="text-sm font-semibold text-red-600 dark:text-red-400">Cons <span className="text-destructive">*</span></Label>
                       <Textarea 
                         name="cons"
-                        placeholder="e.g. Promotion cycles are slow, heavy meeting load." 
-                        className="min-h-[100px] rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors resize-none"
+                        placeholder="What could be improved?" 
+                        className="min-h-[120px] rounded-xl bg-red-500/5 border-red-500/20 focus:bg-background transition-colors resize-none"
+                        required
                       />
                     </div>
                   </div>
@@ -478,11 +503,11 @@ export default function ContributePage() {
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       <Label className="text-sm font-semibold text-foreground/80">Work-Life Balance</Label>
-                      <Input name="workLifeBalance" placeholder="e.g. 40 hrs/week, rare weekends" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                      <Input name="workLifeBalance" placeholder="e.g. Flexible hours, rarely work weekends" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
                     </div>
                     <div className="space-y-3">
                       <Label className="text-sm font-semibold text-foreground/80">Management Style</Label>
-                      <Input name="management" placeholder="e.g. Supportive, Micro-managing" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                      <Input name="management" placeholder="e.g. Supportive, micromanaging, hands-off" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
                     </div>
                   </div>
                   
@@ -494,6 +519,76 @@ export default function ContributePage() {
             </Card>
           </TabsContent>
 
+          {/* HR FEEDBACK TAB */}
+          <TabsContent value="hrfeedback" className="m-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+             <Card className="border-border/60 shadow-lg rounded-2xl overflow-hidden">
+              <div className="h-2 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
+              <CardHeader className="bg-card pb-6">
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <ClipboardList className="h-6 w-6 text-purple-500" /> HR & Company Feedback
+                </CardTitle>
+                <CardDescription className="text-base mt-2">Share your experiences with HR representatives and recruiters.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 md:p-8 bg-card">
+                <form onSubmit={handleHrFeedbackSubmit} className="space-y-8">
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Company <span className="text-destructive">*</span></Label>
+                      <div className="relative">
+                        <Building2 className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
+                        <Input name="company" className="pl-10 h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">Company Tags</Label>
+                      <Input name="companyTags" placeholder="e.g. Slow process, Ghosting, Great culture (comma separated)" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">HR / Recruiter Name <span className="text-destructive">*</span></Label>
+                      <Input name="hrName" placeholder="e.g. Jane Doe" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" required />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">HR Email (Optional)</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
+                        <Input name="hrEmail" type="email" placeholder="jane@company.com" className="pl-10 h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold text-foreground/80">HR LinkedIn (Optional)</Label>
+                      <div className="relative">
+                        <Linkedin className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
+                        <Input name="hrLinkedin" type="url" placeholder="https://linkedin.com/in/..." className="pl-10 h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-foreground/80">Feedback & Comments <span className="text-destructive">*</span></Label>
+                    <Textarea 
+                      name="comments"
+                      placeholder="How was your interaction? Were they responsive? Professional?" 
+                      className="min-h-[120px] rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors resize-none"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-foreground/80">HR Tags</Label>
+                    <Input name="hrTags" placeholder="e.g. Responsive, Helpful, Unprofessional (comma separated)" className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background transition-colors" />
+                  </div>
+                  
+                  <div className="pt-6 flex justify-end border-t border-border/50">
+                    <Button type="submit" size="lg" className="px-8 h-12 rounded-xl text-base bg-purple-600 hover:bg-purple-700">Submit HR Feedback</Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
     </div>

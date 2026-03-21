@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Briefcase, Menu, Users, LogIn, PlusCircle, Plus, ChevronDown, UserCircle, Handshake, Heart, MessageSquare } from "lucide-react";
+import { Briefcase, Menu, Users, LogIn, PlusCircle, Plus, ChevronDown, UserCircle, Handshake, Heart, MessageSquare, ClipboardList } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   DropdownMenu,
@@ -64,6 +64,13 @@ export default function Navbar() {
                   <div className="flex flex-col">
                     <span className="font-medium">Culture & Benefits</span>
                     <span className="text-xs text-muted-foreground">Work-life balance, perks</span>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer py-3" onClick={() => setLocation('/contribute?tab=hrfeedback')}>
+                  <ClipboardList className="mr-3 h-5 w-5 text-purple-500" />
+                  <div className="flex flex-col">
+                    <span className="font-medium">HR & Company Feedback</span>
+                    <span className="text-xs text-muted-foreground">Review recruiters & hiring</span>
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>

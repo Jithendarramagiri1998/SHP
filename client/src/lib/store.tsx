@@ -94,6 +94,19 @@ export type Benefits = {
   authorName: string;
 };
 
+export type HrFeedback = {
+  id: string;
+  company: string;
+  hrName: string;
+  hrEmail: string;
+  hrLinkedin: string;
+  comments: string;
+  companyTags: string[];
+  hrTags: string[];
+  authorId: string;
+  authorName: string;
+};
+
 export type Salary = { 
   id: string; 
   company: string; 
@@ -122,6 +135,7 @@ type StoreContextType = {
   cultures: WorkCulture[];
   benefits: Benefits[];
   salaries: Salary[];
+  hrFeedbacks: HrFeedback[];
   
   addInterview: (data: Omit<Interview, 'id' | 'date'>) => void;
   addJob: (data: Omit<Job, 'id' | 'posted'>) => void;
@@ -129,8 +143,9 @@ type StoreContextType = {
   addCulture: (data: Omit<WorkCulture, 'id'>) => void;
   addBenefit: (data: Omit<Benefits, 'id'>) => void;
   addSalary: (data: Omit<Salary, 'id'>) => void;
+  addHrFeedback: (data: Omit<HrFeedback, 'id'>) => void;
 
-  deleteItem: (type: 'interviews'|'jobs'|'referrals'|'cultures'|'benefits'|'salaries', id: string) => void;
+  deleteItem: (type: 'interviews'|'jobs'|'referrals'|'cultures'|'benefits'|'salaries'|'hrFeedbacks', id: string) => void;
 };
 
 const StoreContext = createContext<StoreContextType | null>(null);
@@ -157,6 +172,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [cultures, setCultures] = useState<WorkCulture[]>(() => JSON.parse(localStorage.getItem('cd_cultures_v2') || '[]'));
   const [benefits, setBenefits] = useState<Benefits[]>(() => JSON.parse(localStorage.getItem('cd_benefits_v2') || '[]'));
   const [salaries, setSalaries] = useState<Salary[]>(() => JSON.parse(localStorage.getItem('cd_salaries_v2') || '[]'));
+  const [hrFeedbacks, setHrFeedbacks] = useState<HrFeedback[]>(() => JSON.parse(localStorage.getItem('cd_hrfeedbacks_v2') || '[]'));
 
   useEffect(() => { localStorage.setItem('cd_profile_v2', JSON.stringify(profile)); }, [profile]);
   useEffect(() => { localStorage.setItem('cd_interviews_v2', JSON.stringify(interviews)); }, [interviews]);
@@ -165,6 +181,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { localStorage.setItem('cd_cultures_v2', JSON.stringify(cultures)); }, [cultures]);
   useEffect(() => { localStorage.setItem('cd_benefits_v2', JSON.stringify(benefits)); }, [benefits]);
   useEffect(() => { localStorage.setItem('cd_salaries_v2', JSON.stringify(salaries)); }, [salaries]);
+  useEffect(() => { localStorage.setItem('cd_hrfeedbacks_v2', JSON.stringify(hrFeedbacks)); }, [hrFeedbacks]);
 
   const updateProfile = (newProfile: UserProfile) => setProfile(newProfile);
 
@@ -192,6 +209,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setSalaries(prev => [{ ...data, id: Date.now().toString() }, ...prev]);
   };
 
+  const addHrFeedback = (data: Omit<HrFeedback, 'id'>) => {
+    setHrFeedbacks(prev => [{ ...data, id: Date.now().toString() }, ...prev]);
+  };
+
   const deleteItem = (type: string, id: string) => {
     if (type === 'interviews') setInterviews(p => p.filter(x => x.id !== id));
     if (type === 'jobs') setJobs(p => p.filter(x => x.id !== id));
@@ -199,13 +220,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (type === 'cultures') setCultures(p => p.filter(x => x.id !== id));
     if (type === 'benefits') setBenefits(p => p.filter(x => x.id !== id));
     if (type === 'salaries') setSalaries(p => p.filter(x => x.id !== id));
+    if (type === 'hrFeedbacks') setHrFeedbacks(p => p.filter(x => x.id !== id));
   };
 
   return (
     <StoreContext.Provider value={{ 
       profile, updateProfile, 
-      interviews, jobs, referrals, cultures, benefits, salaries,
-      addInterview, addJob, addReferral, addCulture, addBenefit, addSalary,
+      interviews, jobs, referrals, cultures, benefits, salaries, hrFeedbacks,
+      addInterview, addJob, addReferral, addCulture, addBenefit, addSalary, addHrFeedback,
       deleteItem
     }}>
       {children}

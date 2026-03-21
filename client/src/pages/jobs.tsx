@@ -3,13 +3,13 @@ import Navbar from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Building2, Briefcase, Clock, UserCircle, MessageSquare, Briefcase as JobIcon, Handshake, Heart, Star, Mail, Linkedin } from "lucide-react";
-import { useStore, Job, Referral, WorkCulture, Interview } from "@/lib/store";
+import { Search, MapPin, Building2, Briefcase, Clock, UserCircle, MessageSquare, Briefcase as JobIcon, Handshake, Heart, Star, Mail, Linkedin, ClipboardList, Tag } from "lucide-react";
+import { useStore, Job, Referral, WorkCulture, Interview, HrFeedback } from "@/lib/store";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function JobsPage() {
-  const { jobs, referrals, cultures, interviews } = useStore();
+  const { jobs, referrals, cultures, interviews, hrFeedbacks } = useStore();
   
   return (
     <div className="min-h-screen bg-muted/20 pb-20">
@@ -17,23 +17,26 @@ export default function JobsPage() {
       
       <main className="container mx-auto py-8 px-4 md:px-6 max-w-5xl">
         <div className="mb-10 text-center md:text-left">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">Explore Opportunities</h1>
-          <p className="text-muted-foreground mt-3 text-lg">Find jobs, request referrals, or learn about company culture.</p>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">Explore Opportunities & Insights</h1>
+          <p className="text-muted-foreground mt-3 text-lg">Find jobs, request referrals, learn about company culture, or read HR feedback.</p>
         </div>
 
         <Tabs defaultValue="jobs" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-1.5 bg-card border rounded-2xl shadow-sm">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto p-1.5 bg-card border rounded-2xl shadow-sm">
             <TabsTrigger value="jobs" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-600 transition-all">
-              <JobIcon className="h-4 w-4" /> Jobs
+              <JobIcon className="h-4 w-4" /> <span className="hidden md:inline">Jobs</span>
             </TabsTrigger>
             <TabsTrigger value="referrals" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-green-500/10 data-[state=active]:text-green-600 transition-all">
-              <Handshake className="h-4 w-4" /> Referrals
+              <Handshake className="h-4 w-4" /> <span className="hidden md:inline">Referrals</span>
             </TabsTrigger>
             <TabsTrigger value="interviews" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-600 transition-all">
-              <MessageSquare className="h-4 w-4" /> Interviews
+              <MessageSquare className="h-4 w-4" /> <span className="hidden md:inline">Interviews</span>
             </TabsTrigger>
             <TabsTrigger value="culture" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 transition-all">
-              <Heart className="h-4 w-4" /> Culture
+              <Heart className="h-4 w-4" /> <span className="hidden md:inline">Culture</span>
+            </TabsTrigger>
+            <TabsTrigger value="hrfeedback" className="py-3.5 text-sm md:text-base gap-2 rounded-xl data-[state=active]:bg-purple-500/10 data-[state=active]:text-purple-600 transition-all">
+              <ClipboardList className="h-4 w-4" /> <span className="hidden md:inline">HR Feedback</span>
             </TabsTrigger>
           </TabsList>
 
@@ -66,6 +69,14 @@ export default function JobsPage() {
               <EmptyState title="No Culture Reviews Yet" description="Share what it's like to work at your company." link="/contribute?tab=culture" />
             ) : (
               cultures.map(culture => <CultureCard key={culture.id} culture={culture} />)
+            )}
+          </TabsContent>
+
+          <TabsContent value="hrfeedback" className="m-0 space-y-6">
+            {hrFeedbacks.length === 0 ? (
+              <EmptyState title="No HR Feedback Yet" description="Share your experiences with recruiters and hiring processes." link="/contribute?tab=hrfeedback" />
+            ) : (
+              hrFeedbacks.map(feedback => <HrFeedbackCard key={feedback.id} feedback={feedback} />)
             )}
           </TabsContent>
         </Tabs>
@@ -307,6 +318,74 @@ function InterviewCard({ interview }: { interview: Interview }) {
             <p className="text-muted-foreground">{interview.authorExperience} @ {interview.authorCompany}</p>
           </div>
           <span className="text-xs text-muted-foreground ml-auto">{interview.date}</span>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function HrFeedbackCard({ feedback }: { feedback: HrFeedback }) {
+  return (
+    <Card className="hover:shadow-md transition-all border-border/60 rounded-2xl overflow-hidden">
+      <div className="h-1.5 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
+      <CardContent className="p-6 space-y-4">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-purple-500" /> {feedback.company}
+            </h3>
+            <p className="text-muted-foreground flex items-center gap-1.5 mt-1 font-medium text-sm">
+              Feedback on HR: <span className="text-foreground">{feedback.hrName}</span>
+            </p>
+          </div>
+          <div className="flex gap-2">
+             {feedback.hrEmail && (
+               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-purple-600" asChild>
+                 <a href={`mailto:${feedback.hrEmail}`}><Mail className="h-4 w-4" /></a>
+               </Button>
+             )}
+             {feedback.hrLinkedin && (
+               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-blue-600" asChild>
+                 <a href={feedback.hrLinkedin} target="_blank" rel="noopener noreferrer"><Linkedin className="h-4 w-4" /></a>
+               </Button>
+             )}
+          </div>
+        </div>
+
+        <div className="bg-purple-500/5 p-4 rounded-xl border border-purple-500/20">
+          <span className="text-xs font-bold text-purple-600 uppercase tracking-wider mb-2 block flex items-center gap-1">
+            <ClipboardList className="h-3.5 w-3.5" /> Comments & Experience
+          </span>
+          <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">{feedback.comments}</p>
+        </div>
+
+        <div className="flex flex-wrap gap-4 pt-2">
+          {feedback.companyTags && feedback.companyTags.length > 0 && (
+            <div className="space-y-1.5">
+              <span className="text-xs text-muted-foreground block font-medium flex items-center gap-1"><Tag className="h-3 w-3" /> Company Tags</span>
+              <div className="flex flex-wrap gap-1.5">
+                {feedback.companyTags.map((tag, i) => (
+                  <Badge key={i} variant="outline" className="bg-muted/50 text-[10px]">{tag}</Badge>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {feedback.hrTags && feedback.hrTags.length > 0 && (
+            <div className="space-y-1.5">
+              <span className="text-xs text-muted-foreground block font-medium flex items-center gap-1"><Tag className="h-3 w-3" /> HR Tags</span>
+              <div className="flex flex-wrap gap-1.5">
+                {feedback.hrTags.map((tag, i) => (
+                  <Badge key={i} variant="secondary" className="bg-purple-500/10 text-purple-700 hover:bg-purple-500/20 border-transparent text-[10px]">{tag}</Badge>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 bg-muted/50 px-3 py-2 rounded-xl border border-border/50 w-max mt-4">
+          <span className="text-xs text-muted-foreground">Shared anonymously by</span>
+          <span className="text-xs font-semibold">{feedback.authorName}</span>
         </div>
       </CardContent>
     </Card>

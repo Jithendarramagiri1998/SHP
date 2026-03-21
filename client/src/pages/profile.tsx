@@ -2,7 +2,7 @@ import { useStore } from "@/lib/store";
 import Navbar from "@/components/layout/Navbar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Briefcase, Building2, TrendingUp, Users, MapPin, Clock, Trash2, Edit, Heart, Handshake } from "lucide-react";
+import { Briefcase, Building2, TrendingUp, Users, MapPin, Clock, Trash2, Edit, Heart, Handshake, ClipboardList } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import { useLocation } from "wouter";
 
 export default function ProfilePage() {
   const [, setLocation] = useLocation();
-  const { profile, updateProfile, jobs, salaries, interviews, referrals, cultures, deleteItem } = useStore();
+  const { profile, updateProfile, jobs, salaries, interviews, referrals, cultures, hrFeedbacks, deleteItem } = useStore();
   const [activeTab, setActiveTab] = useState("jobs");
   
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -23,6 +23,7 @@ export default function ProfilePage() {
   const myInterviews = interviews.filter(i => i.authorId === profile.id);
   const myReferrals = referrals.filter(r => r.authorId === profile.id);
   const myCultures = cultures.filter(c => c.authorId === profile.id);
+  const myHrFeedbacks = hrFeedbacks.filter(h => h.authorId === profile.id);
 
   const handleProfileSave = () => {
     updateProfile(editProfileData);
@@ -116,6 +117,9 @@ export default function ProfilePage() {
             </TabsTrigger>
             <TabsTrigger value="culture" className="rounded-xl data-[state=active]:bg-pink-500/10 data-[state=active]:text-pink-600 border border-transparent data-[state=active]:border-pink-500/20 transition-all px-4 py-2 gap-2">
               <Heart className="h-4 w-4" /> Culture ({myCultures.length})
+            </TabsTrigger>
+            <TabsTrigger value="hrfeedback" className="rounded-xl data-[state=active]:bg-purple-500/10 data-[state=active]:text-purple-600 border border-transparent data-[state=active]:border-purple-500/20 transition-all px-4 py-2 gap-2">
+              <ClipboardList className="h-4 w-4" /> HR ({myHrFeedbacks.length})
             </TabsTrigger>
             <TabsTrigger value="salaries" className="rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary border border-transparent data-[state=active]:border-primary/20 transition-all px-4 py-2 gap-2">
               <TrendingUp className="h-4 w-4" /> Salaries ({mySalaries.length})
@@ -229,6 +233,34 @@ export default function ProfilePage() {
                       </div>
                       <div className="flex gap-2 ml-4">
                         <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10 rounded-xl" onClick={() => deleteItem('cultures', culture.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="hrfeedback" className="m-0 space-y-4">
+             {myHrFeedbacks.length === 0 ? (
+              <EmptyState message="You haven't added any HR feedback yet." tab="hrfeedback" />
+            ) : (
+              myHrFeedbacks.map(feedback => (
+                <Card key={feedback.id} className="border-border/60 rounded-xl overflow-hidden">
+                  <div className="h-1 w-full bg-purple-500"></div>
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="text-lg font-semibold">{feedback.company}</h3>
+                          <span className="text-sm text-muted-foreground">HR: {feedback.hrName}</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground line-clamp-1 mt-2">{feedback.comments}</p>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10 rounded-xl" onClick={() => deleteItem('hrFeedbacks', feedback.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
