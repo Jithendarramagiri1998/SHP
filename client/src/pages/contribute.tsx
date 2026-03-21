@@ -9,18 +9,66 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, MapPin, Briefcase, DollarSign, Users, Sparkles, CheckCircle2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLocation } from "wouter";
+import { useStore } from "@/lib/store";
 
 export default function ContributePage() {
   const [location] = useLocation();
   const searchParams = new URLSearchParams(location.split('?')[1]);
   const defaultTab = searchParams.get('tab') || "job";
   
+  const { addJob, addSalary, addInterview } = useStore();
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleJobSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const offerType = formData.get('offer') as string;
+    
+    addJob({
+      title: formData.get('title') as string,
+      company: formData.get('company') as string,
+      location: formData.get('location') as string || 'Remote',
+      type: formData.get('type') as string,
+      isWalkin: offerType === 'walkin',
+      hasReferral: offerType === 'referral',
+      url: formData.get('url') as string,
+      description: formData.get('description') as string
+    });
     setSubmitted(true);
-    // In a real app, this would send data to the backend
+  };
+
+  const handleSalarySubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const skillsStr = formData.get('skills') as string;
+    const skills = skillsStr ? skillsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+    addSalary({
+      company: formData.get('company') as string,
+      location: formData.get('location') as string || 'Remote',
+      title: formData.get('title') as string,
+      yoe: Number(formData.get('yoe')) || 0,
+      base: Number(formData.get('base')) || 0,
+      bonus: Number(formData.get('bonus')) || 0,
+      stock: Number(formData.get('stock')) || 0,
+      skills
+    });
+    setSubmitted(true);
+  };
+
+  const handleInterviewSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    addInterview({
+      company: formData.get('company') as string,
+      role: formData.get('role') as string,
+      difficulty: formData.get('difficulty') as string,
+      level: formData.get('level') as string,
+      outcome: formData.get('outcome') as string,
+      process: formData.get('process') as string,
+      questions: formData.get('questions') as string
+    });
+    setSubmitted(true);
   };
 
   if (submitted) {
@@ -37,9 +85,9 @@ export default function ContributePage() {
               <p className="text-muted-foreground text-lg max-w-md">
                 Thank you for sharing with the CareerDoor community. Your contribution helps others in their career journey.
               </p>
-              <div className="pt-6 flex gap-4">
+              <div className="pt-6 flex gap-4 justify-center">
                 <Button onClick={() => setSubmitted(false)} variant="outline">Add Another</Button>
-                <Button onClick={() => window.location.href = "/"}>Back to Home</Button>
+                <Button onClick={() => window.location.href = "/profile"}>View My Contributions</Button>
               </div>
             </CardContent>
           </Card>
@@ -80,14 +128,14 @@ export default function ContributePage() {
                 <CardDescription className="text-base mt-1">Are they hiring at your company? Share the link or offer to refer someone.</CardDescription>
               </CardHeader>
               <CardContent className="p-6 md:p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleJobSubmit} className="space-y-6">
                   
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="job-company" className="text-sm font-semibold">Company Name *</Label>
                       <div className="relative">
                         <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="job-company" placeholder="e.g. Google" className="pl-9" required />
+                        <Input id="job-company" name="company" placeholder="e.g. Google" className="pl-9" required />
                       </div>
                     </div>
                     
@@ -95,34 +143,34 @@ export default function ContributePage() {
                       <Label htmlFor="job-location" className="text-sm font-semibold">Location</Label>
                       <div className="relative">
                         <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="job-location" placeholder="e.g. New York or Remote" className="pl-9" />
+                        <Input id="job-location" name="location" placeholder="e.g. New York or Remote" className="pl-9" />
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="job-title" className="text-sm font-semibold">Job Title *</Label>
-                    <Input id="job-title" placeholder="e.g. Senior Frontend Engineer" required />
+                    <Input id="job-title" name="title" placeholder="e.g. Senior Frontend Engineer" required />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                      <div className="space-y-2">
-                        <Label htmlFor="job-type" className="text-sm font-semibold">Job Type</Label>
-                        <Select>
+                        <Label htmlFor="job-type" className="text-sm font-semibold">Job Type *</Label>
+                        <Select name="type" required defaultValue="Full-time">
                           <SelectTrigger>
                             <SelectValue placeholder="Select type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="full-time">Full-time</SelectItem>
-                            <SelectItem value="contract">Contract</SelectItem>
-                            <SelectItem value="internship">Internship</SelectItem>
+                            <SelectItem value="Full-time">Full-time</SelectItem>
+                            <SelectItem value="Contract">Contract</SelectItem>
+                            <SelectItem value="Internship">Internship</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       
                       <div className="space-y-2">
                         <Label htmlFor="job-offer" className="text-sm font-semibold">What are you offering? *</Label>
-                        <Select defaultValue="referral">
+                        <Select name="offer" required defaultValue="referral">
                           <SelectTrigger>
                             <SelectValue placeholder="Select option" />
                           </SelectTrigger>
@@ -137,13 +185,14 @@ export default function ContributePage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="job-url" className="text-sm font-semibold">Job URL / Link</Label>
-                    <Input id="job-url" type="url" placeholder="https://..." />
+                    <Input id="job-url" name="url" type="url" placeholder="https://..." />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="job-desc" className="text-sm font-semibold">Additional Details or Instructions</Label>
                     <Textarea 
                       id="job-desc" 
+                      name="description"
                       placeholder="e.g. DM me your resume if interested. Looking for 3+ years experience with React." 
                       className="min-h-[100px]"
                     />
@@ -164,14 +213,14 @@ export default function ContributePage() {
                 <CardDescription className="text-base mt-1">Help others know their worth by anonymously sharing your compensation.</CardDescription>
               </CardHeader>
               <CardContent className="p-6 md:p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSalarySubmit} className="space-y-6">
                   
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="sal-company" className="text-sm font-semibold">Company Name *</Label>
                       <div className="relative">
                         <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="sal-company" placeholder="e.g. Stripe" className="pl-9" required />
+                        <Input id="sal-company" name="company" placeholder="e.g. Stripe" className="pl-9" required />
                       </div>
                     </div>
                     
@@ -179,7 +228,7 @@ export default function ContributePage() {
                       <Label htmlFor="sal-location" className="text-sm font-semibold">Location</Label>
                       <div className="relative">
                         <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="sal-location" placeholder="e.g. San Francisco" className="pl-9" />
+                        <Input id="sal-location" name="location" placeholder="e.g. San Francisco" className="pl-9" />
                       </div>
                     </div>
                   </div>
@@ -187,11 +236,11 @@ export default function ContributePage() {
                   <div className="grid md:grid-cols-2 gap-6">
                      <div className="space-y-2">
                         <Label htmlFor="sal-title" className="text-sm font-semibold">Job Title *</Label>
-                        <Input id="sal-title" placeholder="e.g. Product Designer" required />
+                        <Input id="sal-title" name="title" placeholder="e.g. Product Designer" required />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="sal-yoe" className="text-sm font-semibold">Years of Experience</Label>
-                        <Input id="sal-yoe" type="number" placeholder="e.g. 5" min="0" />
+                        <Input id="sal-yoe" name="yoe" type="number" placeholder="e.g. 5" min="0" />
                       </div>
                   </div>
 
@@ -202,21 +251,21 @@ export default function ContributePage() {
                         <Label htmlFor="sal-base" className="text-sm">Base Salary (/yr) *</Label>
                         <div className="relative">
                           <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
-                          <Input id="sal-base" type="number" placeholder="120,000" className="pl-7" required />
+                          <Input id="sal-base" name="base" type="number" placeholder="120000" className="pl-7" required />
                         </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="sal-bonus" className="text-sm">Bonus (/yr)</Label>
                         <div className="relative">
                           <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
-                          <Input id="sal-bonus" type="number" placeholder="15,000" className="pl-7" />
+                          <Input id="sal-bonus" name="bonus" type="number" placeholder="15000" className="pl-7" />
                         </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="sal-stock" className="text-sm">Stock/Equity (/yr)</Label>
                         <div className="relative">
                           <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
-                          <Input id="sal-stock" type="number" placeholder="30,000" className="pl-7" />
+                          <Input id="sal-stock" name="stock" type="number" placeholder="30000" className="pl-7" />
                         </div>
                       </div>
                     </div>
@@ -224,7 +273,7 @@ export default function ContributePage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="sal-skills" className="text-sm font-semibold">Primary Skills/Tech Stack</Label>
-                    <Input id="sal-skills" placeholder="e.g. Figma, Framer, User Research" />
+                    <Input id="sal-skills" name="skills" placeholder="e.g. Figma, Framer, User Research" />
                     <p className="text-xs text-muted-foreground">Comma separated</p>
                   </div>
                   
@@ -247,62 +296,62 @@ export default function ContributePage() {
                 <CardDescription className="text-base mt-1">What did they ask? How was the process? Help others prepare.</CardDescription>
               </CardHeader>
               <CardContent className="p-6 md:p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleInterviewSubmit} className="space-y-6">
                   
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="int-company" className="text-sm font-semibold">Company Name *</Label>
                       <div className="relative">
                         <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input id="int-company" placeholder="e.g. Amazon" className="pl-9" required />
+                        <Input id="int-company" name="company" placeholder="e.g. Amazon" className="pl-9" required />
                       </div>
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="int-role" className="text-sm font-semibold">Role Interviewed For *</Label>
-                      <Input id="int-role" placeholder="e.g. Software Development Engineer II" required />
+                      <Input id="int-role" name="role" placeholder="e.g. Software Development Engineer II" required />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-6">
                      <div className="space-y-2">
                         <Label htmlFor="int-difficulty" className="text-sm font-semibold">Difficulty</Label>
-                        <Select>
+                        <Select name="difficulty" defaultValue="Medium">
                           <SelectTrigger>
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="easy">Easy</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="hard">Hard</SelectItem>
+                            <SelectItem value="Easy">Easy</SelectItem>
+                            <SelectItem value="Medium">Medium</SelectItem>
+                            <SelectItem value="Hard">Hard</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       
                       <div className="space-y-2">
                         <Label htmlFor="int-level" className="text-sm font-semibold">Level (if applicable)</Label>
-                        <Select>
+                        <Select name="level" defaultValue="L2">
                           <SelectTrigger>
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="l1">Entry / L1</SelectItem>
-                            <SelectItem value="l2">Mid / L2</SelectItem>
-                            <SelectItem value="l3">Senior / L3+</SelectItem>
+                            <SelectItem value="L1">Entry / L1</SelectItem>
+                            <SelectItem value="L2">Mid / L2</SelectItem>
+                            <SelectItem value="L3">Senior / L3+</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="int-outcome" className="text-sm font-semibold">Offer Status</Label>
-                        <Select>
+                        <Select name="outcome" defaultValue="Pending">
                           <SelectTrigger>
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="offer">Got Offer</SelectItem>
-                            <SelectItem value="no-offer">No Offer</SelectItem>
-                            <SelectItem value="pending">Pending/Declined</SelectItem>
+                            <SelectItem value="Offer">Got Offer</SelectItem>
+                            <SelectItem value="No Offer">No Offer</SelectItem>
+                            <SelectItem value="Pending">Pending/Declined</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -312,6 +361,7 @@ export default function ContributePage() {
                     <Label htmlFor="int-process" className="text-sm font-semibold">Interview Process Overview *</Label>
                     <Textarea 
                       id="int-process" 
+                      name="process"
                       placeholder="e.g. 1 Phone screen with recruiter, followed by 4 rounds of virtual onsite (2 coding, 1 system design, 1 behavioral)." 
                       className="min-h-[100px]"
                       required
@@ -322,6 +372,7 @@ export default function ContributePage() {
                     <Label htmlFor="int-questions" className="text-sm font-semibold text-primary">Questions Asked & Suggestions *</Label>
                     <Textarea 
                       id="int-questions" 
+                      name="questions"
                       placeholder="What were the specific questions? E.g., 'Design a rate limiter' or 'Tell me about a time you disagreed with a manager.' Any tips for future candidates?" 
                       className="min-h-[150px] bg-background"
                       required

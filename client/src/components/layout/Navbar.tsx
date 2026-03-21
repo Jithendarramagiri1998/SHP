@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Briefcase, Menu, Building2, TrendingUp, Users, LogIn, PlusCircle, Plus, ChevronDown } from "lucide-react";
+import { Briefcase, Menu, Building2, TrendingUp, Users, LogIn, PlusCircle, Plus, ChevronDown, UserCircle } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   DropdownMenu,
@@ -79,6 +79,12 @@ export default function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <Link href="/profile">
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+                <UserCircle className="h-5 w-5" />
+              </Button>
+            </Link>
+
             <Link href="/auth">
               <Button variant="outline" className="gap-2 border-primary/20 hover:bg-primary/5">
                 <LogIn className="h-4 w-4" />
@@ -111,6 +117,12 @@ export default function Navbar() {
                       </Link>
                     );
                   })}
+                  <Link href="/profile">
+                    <Button variant="ghost" className="w-full justify-start gap-3 text-lg font-medium">
+                      <UserCircle className="h-5 w-5" />
+                      My Profile
+                    </Button>
+                  </Link>
                 </div>
                 <hr className="border-border" />
                 <div className="flex flex-col gap-3 mt-4">

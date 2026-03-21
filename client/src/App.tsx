@@ -3,6 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { StoreProvider } from "./lib/store";
 import NotFound from "@/pages/not-found";
 
 import Home from "@/pages/home";
@@ -12,6 +13,7 @@ import CompaniesPage from "@/pages/companies";
 import SalariesPage from "@/pages/salaries";
 import InterviewsPage from "@/pages/interviews";
 import ContributePage from "@/pages/contribute";
+import ProfilePage from "@/pages/profile";
 
 function Router() {
   return (
@@ -23,6 +25,7 @@ function Router() {
       <Route path="/salaries" component={SalariesPage} />
       <Route path="/interviews" component={InterviewsPage} />
       <Route path="/contribute" component={ContributePage} />
+      <Route path="/profile" component={ProfilePage} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -30,12 +33,14 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <StoreProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </StoreProvider>
   );
 }
 
