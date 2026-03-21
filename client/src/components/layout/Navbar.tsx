@@ -19,9 +19,7 @@ export default function Navbar() {
       <div className="container flex h-20 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-6">
           <Link href="/">
-            <span className="flex items-center gap-2 font-display text-2xl font-black tracking-tighter uppercase text-foreground cursor-pointer hover:bg-foreground hover:text-background transition-colors px-2 py-1">
-              CareerDoor
-            </span>
+            <span className="flex items-center gap-2 font-display text-2xl font-black tracking-tighter uppercase text-foreground cursor-pointer hover:bg-foreground hover:text-background transition-colors px-2 py-1">softwaretruth</span>
           </Link>
         </div>
 
