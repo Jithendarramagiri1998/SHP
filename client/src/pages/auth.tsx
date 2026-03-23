@@ -40,7 +40,7 @@ export default function AuthPage() {
             <span className="font-display text-5xl font-black tracking-tighter uppercase text-foreground group-hover:text-background group-hover:bg-foreground transition-all px-4 py-2 leading-none">
               SHP
             </span>
-            <span className="text-xs font-bold uppercase tracking-widest mt-2">SoftwareHiringTruth</span>
+            <span className="text-xs font-bold uppercase tracking-widest mt-2">SoftwareHiringProcess</span>
           </div>
         </Link>
 

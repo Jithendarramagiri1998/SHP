@@ -23,7 +23,7 @@ export default function Navbar() {
               <span className="font-display text-3xl font-black tracking-tighter uppercase text-foreground group-hover:text-background group-hover:bg-foreground transition-all px-2 py-1 inline-block w-max leading-none">
                 SHP
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest px-2 mt-1">SoftwareHiringTruth</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest px-2 mt-1">SoftwareHiringProcess</span>
             </div>
           </Link>
         </div>
@@ -89,7 +89,7 @@ export default function Navbar() {
                 <Link href="/">
                   <div className="border-b-4 border-foreground pb-6 mb-6 block cursor-pointer group">
                     <span className="font-display text-4xl font-black uppercase tracking-tighter block leading-none group-hover:bg-foreground group-hover:text-background w-max px-2 py-1 transition-all">SHP</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest mt-2 block px-2">SoftwareHiringTruth</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest mt-2 block px-2">SoftwareHiringProcess</span>
                   </div>
                 </Link>
                 <div className="flex flex-col gap-4">
