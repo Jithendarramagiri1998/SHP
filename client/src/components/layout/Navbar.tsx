@@ -10,21 +10,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { motion } from "framer-motion";
 
 export default function Navbar() {
   const [, setLocation] = useLocation();
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b-4 border-foreground bg-background">
+    <nav className="sticky top-0 z-50 w-full glass-panel border-b-0 border-white/10">
       <div className="container flex h-20 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-6">
           <Link href="/">
-            <div className="flex flex-col cursor-pointer group">
-              <span className="font-display text-3xl font-black tracking-tighter uppercase text-foreground group-hover:text-background group-hover:bg-foreground transition-all px-2 py-1 inline-block w-max leading-none">
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              className="flex flex-col cursor-pointer group"
+            >
+              <span className="font-display text-2xl font-bold tracking-tight text-foreground gradient-text leading-none">
                 SHP
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest px-2 mt-1">SoftwareHiringProcess</span>
-            </div>
+              <span className="text-[10px] font-medium text-foreground/60 tracking-widest mt-1">SoftwareHiringProcess</span>
+            </motion.div>
           </Link>
         </div>
 
@@ -33,44 +37,44 @@ export default function Navbar() {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="default" className="gap-2 font-bold uppercase tracking-widest rounded-none border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                <Button variant="outline" className="gap-2 font-medium rounded-full glass border-white/10 hover:bg-white/10 transition-all">
                   <Plus className="h-4 w-4" /> Contribute
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 rounded-none border-2 border-foreground shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <DropdownMenuLabel className="font-bold uppercase tracking-wider text-xs">Share Insight</DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-foreground" />
-                <DropdownMenuItem className="cursor-pointer py-3 rounded-none focus:bg-foreground focus:text-background" onClick={() => setLocation('/contribute?tab=interview')}>
+              <DropdownMenuContent align="end" className="w-64 glass-panel border-white/10 rounded-2xl p-2">
+                <DropdownMenuLabel className="font-medium text-xs text-foreground/60 px-2 pt-2">Share Insight</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-white/10 my-2" />
+                <DropdownMenuItem className="cursor-pointer py-3 rounded-xl focus:bg-white/10 focus:text-foreground transition-all" onClick={() => setLocation('/contribute?tab=interview')}>
                   <MessageSquare className="mr-3 h-4 w-4" />
-                  <span className="font-bold uppercase tracking-wider text-sm">Interview</span>
+                  <span className="font-medium text-sm">Interview Experience</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer py-3 rounded-none focus:bg-foreground focus:text-background" onClick={() => setLocation('/contribute?tab=job')}>
+                <DropdownMenuItem className="cursor-pointer py-3 rounded-xl focus:bg-white/10 focus:text-foreground transition-all" onClick={() => setLocation('/contribute?tab=job')}>
                   <Briefcase className="mr-3 h-4 w-4" />
-                  <span className="font-bold uppercase tracking-wider text-sm">Job / Walk-in</span>
+                  <span className="font-medium text-sm">Job / Walk-in</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer py-3 rounded-none focus:bg-foreground focus:text-background" onClick={() => setLocation('/contribute?tab=referral')}>
+                <DropdownMenuItem className="cursor-pointer py-3 rounded-xl focus:bg-white/10 focus:text-foreground transition-all" onClick={() => setLocation('/contribute?tab=referral')}>
                   <Handshake className="mr-3 h-4 w-4" />
-                  <span className="font-bold uppercase tracking-wider text-sm">Referral</span>
+                  <span className="font-medium text-sm">Referral</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer py-3 rounded-none focus:bg-foreground focus:text-background" onClick={() => setLocation('/contribute?tab=culture')}>
+                <DropdownMenuItem className="cursor-pointer py-3 rounded-xl focus:bg-white/10 focus:text-foreground transition-all" onClick={() => setLocation('/contribute?tab=culture')}>
                   <Heart className="mr-3 h-4 w-4" />
-                  <span className="font-bold uppercase tracking-wider text-sm">Culture</span>
+                  <span className="font-medium text-sm">Company Culture</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer py-3 rounded-none focus:bg-foreground focus:text-background" onClick={() => setLocation('/contribute?tab=hrfeedback')}>
+                <DropdownMenuItem className="cursor-pointer py-3 rounded-xl focus:bg-white/10 focus:text-foreground transition-all" onClick={() => setLocation('/contribute?tab=hrfeedback')}>
                   <ClipboardList className="mr-3 h-4 w-4" />
-                  <span className="font-bold uppercase tracking-wider text-sm">HR Feedback</span>
+                  <span className="font-medium text-sm">HR Feedback</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
             <Link href="/profile">
-              <Button variant="ghost" size="icon" className="rounded-none border-2 border-transparent hover:border-foreground transition-all">
-                <UserCircle className="h-6 w-6" />
+              <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/10 transition-all">
+                <UserCircle className="h-5 w-5" />
               </Button>
             </Link>
 
             <Link href="/auth">
-              <Button variant="outline" className="gap-2 rounded-none border-2 border-foreground font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-colors">
+              <Button className="gap-2 rounded-full font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors">
                 <LogIn className="h-4 w-4" />
                 Sign In
               </Button>
@@ -79,27 +83,27 @@ export default function Navbar() {
 
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="md:hidden rounded-none border-2 border-foreground">
+              <Button variant="outline" size="icon" className="md:hidden rounded-xl glass border-white/10">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] border-l-4 border-foreground rounded-none p-0">
-              <div className="flex flex-col h-full bg-background p-6">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] glass-panel border-l border-white/10 rounded-none p-0">
+              <div className="flex flex-col h-full p-6">
                 <Link href="/">
-                  <div className="border-b-4 border-foreground pb-6 mb-6 block cursor-pointer group">
-                    <span className="font-display text-4xl font-black uppercase tracking-tighter block leading-none group-hover:bg-foreground group-hover:text-background w-max px-2 py-1 transition-all">SHP</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest mt-2 block px-2">SoftwareHiringProcess</span>
+                  <div className="border-b border-white/10 pb-6 mb-6 cursor-pointer">
+                    <span className="font-display text-2xl font-bold gradient-text block">SHP</span>
+                    <span className="text-[10px] font-medium text-foreground/60 tracking-widest mt-1 block">SoftwareHiringProcess</span>
                   </div>
                 </Link>
                 <div className="flex flex-col gap-4">
                   <Link href="/profile">
-                    <Button variant="outline" className="w-full justify-start gap-3 text-lg font-bold uppercase tracking-wider rounded-none border-2 border-foreground h-14">
+                    <Button variant="ghost" className="w-full justify-start gap-3 text-base font-medium rounded-xl hover:bg-white/10 h-12">
                       <UserCircle className="h-5 w-5" />
                       My Profile
                     </Button>
                   </Link>
-                  <Button className="w-full justify-start gap-3 text-lg font-bold uppercase tracking-wider rounded-none border-2 border-foreground h-14 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" onClick={() => {
+                  <Button className="w-full justify-start gap-3 text-base font-medium rounded-xl h-12 bg-white/10 hover:bg-white/20 border border-white/5" onClick={() => {
                     setLocation('/contribute');
                   }}>
                     <PlusCircle className="h-5 w-5" /> Add Insight
@@ -107,7 +111,7 @@ export default function Navbar() {
                 </div>
                 <div className="mt-auto">
                   <Link href="/auth">
-                    <Button variant="outline" className="w-full justify-center gap-2 font-bold uppercase tracking-widest rounded-none border-2 border-foreground h-14 bg-foreground text-background hover:bg-background hover:text-foreground transition-colors">
+                    <Button className="w-full justify-center gap-2 font-medium rounded-xl h-12 bg-foreground text-background hover:bg-foreground/90 transition-colors">
                       <LogIn className="h-5 w-5" /> Sign In
                     </Button>
                   </Link>

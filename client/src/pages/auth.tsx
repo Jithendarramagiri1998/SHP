@@ -3,8 +3,8 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useStore } from "@/lib/store";
+import { motion } from "framer-motion";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
@@ -32,75 +32,78 @@ export default function AuthPage() {
     setLocation("/");
   };
 
+  const GlassInput = ({ id, name, type="text", placeholder, label, required=false }: any) => (
+    <div className="space-y-2">
+      <Label htmlFor={id} className="text-xs font-medium text-foreground/60 uppercase tracking-widest ml-1">{label} {required && "*"}</Label>
+      <Input 
+        id={id} 
+        name={name} 
+        type={type}
+        placeholder={placeholder} 
+        className="h-12 bg-white/[0.03] border-white/10 rounded-xl focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:border-white/20 transition-all font-medium placeholder:text-foreground/20" 
+        required={required} 
+      />
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-xl">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Orbs */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] pointer-events-none -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none translate-x-1/2 translate-y-1/2" />
+
+      <div className="w-full max-w-xl relative z-10">
         <Link href="/">
-          <div className="flex flex-col items-center justify-center mb-8 cursor-pointer group">
-            <span className="font-display text-5xl font-black tracking-tighter uppercase text-foreground group-hover:text-background group-hover:bg-foreground transition-all px-4 py-2 leading-none">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center mb-12 cursor-pointer group"
+          >
+            <span className="font-display text-5xl font-bold tracking-tight text-foreground gradient-text leading-none">
               SHP
             </span>
-            <span className="text-xs font-bold uppercase tracking-widest mt-2">SoftwareHiringProcess</span>
-          </div>
+            <span className="text-xs font-medium text-foreground/50 tracking-widest mt-2 uppercase">SoftwareHiringProcess</span>
+          </motion.div>
         </Link>
 
-        <Card className="shadow-none border-2 border-border rounded-none">
-          <CardHeader className="space-y-1 text-center bg-muted/20 border-b-2 border-border">
-            <CardTitle className="text-2xl font-bold uppercase tracking-wider">Join Community</CardTitle>
-            <CardDescription className="text-foreground font-medium uppercase text-xs tracking-widest">
-              Please enter your professional details
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-8">
-            <form onSubmit={handleLoginSubmit} className="space-y-6">
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <Label htmlFor="name" className="text-xs uppercase tracking-widest font-bold">Full Name *</Label>
-                  <Input id="name" name="name" placeholder="John Doe" className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
-                </div>
-                <div className="space-y-3">
-                  <Label htmlFor="email" className="text-xs uppercase tracking-widest font-bold">Email Address *</Label>
-                  <Input id="email" name="email" type="email" placeholder="john@example.com" className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
-                </div>
-              </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
+          className="glass-panel rounded-3xl p-8 md:p-10 shadow-2xl"
+        >
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-semibold tracking-tight mb-2">Join the Network</h2>
+            <p className="text-sm font-medium text-foreground/50">Enter your professional details to access insights.</p>
+          </div>
+          
+          <form onSubmit={handleLoginSubmit} className="space-y-6">
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <GlassInput id="name" name="name" label="Full Name" placeholder="John Doe" required />
+              <GlassInput id="email" name="email" type="email" label="Email Address" placeholder="john@example.com" required />
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <Label htmlFor="company" className="text-xs uppercase tracking-widest font-bold">Company Name *</Label>
-                  <Input id="company" name="company" placeholder="e.g. Google, Startup Inc." className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
-                </div>
-                <div className="space-y-3">
-                  <Label htmlFor="role" className="text-xs uppercase tracking-widest font-bold">Current Role *</Label>
-                  <Input id="role" name="role" placeholder="e.g. Software Engineer" className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <GlassInput id="company" name="company" label="Company" placeholder="e.g. Google" required />
+              <GlassInput id="role" name="role" label="Current Role" placeholder="e.g. Software Engineer" required />
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <Label htmlFor="experience" className="text-xs uppercase tracking-widest font-bold">Experience *</Label>
-                  <Input id="experience" name="experience" placeholder="e.g. 5 Years" className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
-                </div>
-                <div className="space-y-3">
-                  <Label htmlFor="linkedin" className="text-xs uppercase tracking-widest font-bold">LinkedIn URL *</Label>
-                  <Input id="linkedin" name="linkedin" type="url" placeholder="https://linkedin.com/in/..." className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <GlassInput id="experience" name="experience" label="Experience" placeholder="e.g. 5 Years" required />
+              <GlassInput id="linkedin" name="linkedin" type="url" label="LinkedIn URL" placeholder="https://linkedin.com/in/..." required />
+            </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="skills" className="text-xs uppercase tracking-widest font-bold">Skill Set *</Label>
-                <Input id="skills" name="skills" placeholder="React, Node.js, Python (comma separated)" className="rounded-none border-2 h-12 focus-visible:ring-0 focus-visible:border-foreground" required />
-              </div>
+            <GlassInput id="skills" name="skills" label="Skill Set" placeholder="React, Node.js, Python (comma separated)" required />
 
-              <div className="pt-4">
-                <Button type="submit" className="w-full rounded-none h-14 text-sm font-bold uppercase tracking-widest border-2 border-transparent hover:border-foreground hover:bg-transparent hover:text-foreground transition-all">
-                  Access SHP
-                </Button>
-              </div>
+            <div className="pt-6">
+              <Button type="submit" className="w-full h-14 rounded-xl font-medium text-base bg-foreground text-background hover:bg-foreground/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                Access SHP
+              </Button>
+            </div>
 
-            </form>
-          </CardContent>
-        </Card>
+          </form>
+        </motion.div>
 
       </div>
     </div>
