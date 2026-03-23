@@ -36,9 +36,12 @@ export default function AuthPage() {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-xl">
         <Link href="/">
-          <span className="flex items-center justify-center gap-2 font-display text-3xl font-bold tracking-tight text-foreground mb-8 cursor-pointer uppercase">
-            CareerDoor
-          </span>
+          <div className="flex flex-col items-center justify-center mb-8 cursor-pointer group">
+            <span className="font-display text-5xl font-black tracking-tighter uppercase text-foreground group-hover:text-background group-hover:bg-foreground transition-all px-4 py-2 leading-none">
+              SHP
+            </span>
+            <span className="text-xs font-bold uppercase tracking-widest mt-2">SoftwareHiringTruth</span>
+          </div>
         </Link>
 
         <Card className="shadow-none border-2 border-border rounded-none">
@@ -91,7 +94,7 @@ export default function AuthPage() {
 
               <div className="pt-4">
                 <Button type="submit" className="w-full rounded-none h-14 text-sm font-bold uppercase tracking-widest border-2 border-transparent hover:border-foreground hover:bg-transparent hover:text-foreground transition-all">
-                  Access CareerDoor
+                  Access SHP
                 </Button>
               </div>
 

@@ -19,7 +19,12 @@ export default function Navbar() {
       <div className="container flex h-20 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-6">
           <Link href="/">
-            <span className="flex items-center gap-2 font-display text-2xl font-black tracking-tighter uppercase text-foreground cursor-pointer hover:bg-foreground hover:text-background transition-colors px-2 py-1">shp</span>
+            <div className="flex flex-col cursor-pointer group">
+              <span className="font-display text-3xl font-black tracking-tighter uppercase text-foreground group-hover:text-background group-hover:bg-foreground transition-all px-2 py-1 inline-block w-max leading-none">
+                SHP
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-widest px-2 mt-1">SoftwareHiringTruth</span>
+            </div>
           </Link>
         </div>
 
@@ -82,7 +87,10 @@ export default function Navbar() {
             <SheetContent side="right" className="w-[300px] sm:w-[400px] border-l-4 border-foreground rounded-none p-0">
               <div className="flex flex-col h-full bg-background p-6">
                 <Link href="/">
-                  <span className="font-display text-3xl font-black uppercase tracking-tighter border-b-4 border-foreground pb-6 mb-6 block">CareerDoor</span>
+                  <div className="border-b-4 border-foreground pb-6 mb-6 block cursor-pointer group">
+                    <span className="font-display text-4xl font-black uppercase tracking-tighter block leading-none group-hover:bg-foreground group-hover:text-background w-max px-2 py-1 transition-all">SHP</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest mt-2 block px-2">SoftwareHiringTruth</span>
+                  </div>
                 </Link>
                 <div className="flex flex-col gap-4">
                   <Link href="/profile">
