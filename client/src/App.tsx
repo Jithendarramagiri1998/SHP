@@ -31,17 +31,19 @@ function Router() {
   );
 }
 
-function App() {
+export default function App() {
   return (
-    <StoreProvider>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </QueryClientProvider>
-    </StoreProvider>
+    <div className="animated-gradient-bg min-h-screen">
+
+      <StoreProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </QueryClientProvider>
+      </StoreProvider>
+
+    </div>
   );
 }
-
-export default App;
