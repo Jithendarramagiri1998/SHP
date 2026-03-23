@@ -1,3 +1,7 @@
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
@@ -6,12 +10,14 @@ import { createServer } from "http";
 const app = express();
 const httpServer = createServer(app);
 
+// ✅ Extend request type
 declare module "http" {
   interface IncomingMessage {
     rawBody: unknown;
   }
 }
 
+// ✅ Middleware
 app.use(
   express.json({
     verify: (req, _res, buf) => {
@@ -22,6 +28,7 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
+// ✅ Logger
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -33,6 +40,7 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
+// ✅ Request logging
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -46,8 +54,10 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
+
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
@@ -59,9 +69,33 @@ app.use((req, res, next) => {
   next();
 });
 
+// ✅ MongoDB Connection (BEST PRACTICE)
+async function connectDB() {
+  try {
+    if (!process.env.MONGO_URL) {
+      throw new Error("❌ MONGO_URL not found in .env");
+    }
+
+    console.log("🔄 Connecting to MongoDB...");
+
+    await mongoose.connect(process.env.MONGO_URL);
+
+    console.log("✅ MongoDB Connected");
+  } catch (err) {
+    console.error("❌ MongoDB Error:", err);
+    process.exit(1); // stop server if DB fails
+  }
+}
+
+// ✅ MAIN START FUNCTION
 (async () => {
+  // 🔥 Connect DB FIRST
+  await connectDB();
+
+  // 🔥 Register routes
   await registerRoutes(httpServer, app);
 
+  // ✅ Error handler
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
@@ -75,9 +109,7 @@ app.use((req, res, next) => {
     return res.status(status).json({ message });
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
+  // ✅ Static / Vite setup
   if (process.env.NODE_ENV === "production") {
     serveStatic(app);
   } else {
@@ -85,11 +117,9 @@ app.use((req, res, next) => {
     await setupVite(httpServer, app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
+  // ✅ Start server
   const port = parseInt(process.env.PORT || "5000", 10);
+
   httpServer.listen(
     {
       port,
@@ -97,7 +127,7 @@ app.use((req, res, next) => {
       reusePort: true,
     },
     () => {
-      log(`serving on port ${port}`);
+      log(`🚀 Server running on port ${port}`);
     },
   );
 })();
