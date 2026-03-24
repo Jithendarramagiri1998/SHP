@@ -59,10 +59,29 @@
 ========================= */
 @layer utilities {
 
-  /* 🔥 Premium Background */
-  .animated-gradient-bg {
-    background: radial-gradient(circle at top, #111111, #000000 60%);
+  /* 🌈 Apple Hero Gradient (LIKE IMAGE) */
+  .apple-hero-bg {
+    background: linear-gradient(
+      to bottom,
+      #1a1f5c 0%,
+      #2d3a8c 30%,
+      #4c5bd4 60%,
+      #aab3ff 100%
+    );
     min-height: 100vh;
+  }
+
+  /* ✨ Glow Text (Apple style) */
+  .apple-glow-text {
+    background: linear-gradient(
+      90deg,
+      #00d4ff,
+      #7c7cff,
+      #ff7ac6,
+      #ffd166
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   /* 💎 Glass */
@@ -72,28 +91,18 @@
 
   /* 🧊 Card */
   .glass-card {
-    @apply bg-[#0a0a0a] border border-white/10 rounded-2xl 
+    @apply bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl 
            shadow-xl hover:shadow-2xl transition-all duration-300;
   }
 
-  /* 🔴 Primary Button */
+  /* 🔴 Red Premium Button */
   .btn-primary {
-    @apply bg-red-600 text-white font-semibold px-6 py-3 rounded-xl 
+    @apply bg-red-600 text-white font-semibold px-6 py-3 rounded-full 
            hover:bg-red-700 transition-all duration-300;
   }
 
-  /* ⚪ Secondary Button */
-  .btn-secondary {
-    @apply bg-white text-black font-semibold px-6 py-3 rounded-xl;
-  }
-
-  /* ✨ Highlight Text */
-  .highlight-text {
-    @apply text-white font-extrabold;
-  }
-
-  /* 🔥 Subtle Glow */
-  .text-glow {
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  /* ⚪ White Button */
+  .btn-white {
+    @apply bg-white text-black font-semibold px-6 py-3 rounded-full;
   }
 }
