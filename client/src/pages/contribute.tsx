@@ -7,14 +7,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Briefcase, Sparkles, CheckCircle2, MessageSquare, Handshake, Heart, ClipboardList, TrendingUp } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { useStore } from "@/lib/store";
 import { motion } from "framer-motion";
 
 export default function ContributePage() {
-  const [location, setLocation] = useLocation();
-  const searchParams = new URLSearchParams(location.split('?')[1]);
-  const defaultTab = searchParams.get('tab') || "interview";
+  const [, setLocation] = useLocation();
+  const searchString = useSearch();
+  const searchParams = new URLSearchParams(searchString);
+  const currentTab = searchParams.get('tab') || "interview";
   
   const { profile, addInterview, addJob, addReferral, addCulture, addHrFeedback, addSalary } = useStore();
   const [submitted, setSubmitted] = useState(false);
@@ -154,11 +155,11 @@ export default function ContributePage() {
   };
 
   const InputGlass = ({ className, ...props }: any) => (
-    <Input className={`h-12 bg-white/[0.03] border-white/10 rounded-xl focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:border-white/20 transition-all font-medium placeholder:text-foreground/20 ${className}`} {...props} />
+    <Input className={`h-12 bg-white/[0.03] border-white/10 rounded-xl focus-visible:ring-1 focus-visible:ring-red-500/50 focus-visible:border-red-500/50 transition-all font-medium placeholder:text-foreground/20 ${className}`} {...props} />
   );
 
   const TextareaGlass = ({ className, ...props }: any) => (
-    <Textarea className={`bg-white/[0.03] border-white/10 rounded-xl focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:border-white/20 transition-all font-medium placeholder:text-foreground/20 resize-none ${className}`} {...props} />
+    <Textarea className={`bg-white/[0.03] border-white/10 rounded-xl focus-visible:ring-1 focus-visible:ring-red-500/50 focus-visible:border-red-500/50 transition-all font-medium placeholder:text-foreground/20 resize-none ${className}`} {...props} />
   );
 
   const LabelGlass = ({ className, children, ...props }: any) => (
@@ -184,7 +185,7 @@ export default function ContributePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
               <Button onClick={() => setSubmitted(false)} variant="outline" className="h-12 px-8 rounded-full glass border-white/10 font-medium hover:bg-white/10">Log Another</Button>
-              <Button onClick={() => setLocation("/profile")} className="h-12 px-8 rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium">View Ledger</Button>
+              <Button onClick={() => setLocation("/profile")} className="h-12 px-8 rounded-full bg-white text-black hover:bg-white/90 font-medium">View Ledger</Button>
             </div>
           </motion.div>
         </main>
@@ -194,7 +195,7 @@ export default function ContributePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-20">
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2" />
+      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2" />
       
       <Navbar />
       
@@ -212,7 +213,7 @@ export default function ContributePage() {
           </p>
         </motion.div>
 
-        <Tabs defaultValue={defaultTab} className="space-y-12">
+        <Tabs value={currentTab} onValueChange={(val) => setLocation(`/contribute?tab=${val}`)} className="space-y-12">
           <TabsList className="flex flex-wrap justify-center h-auto bg-transparent p-0 gap-2 border-none mb-12">
             {[
               { id: 'interview', icon: MessageSquare, label: 'Interview' },
@@ -237,7 +238,7 @@ export default function ContributePage() {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-8 md:p-10 border-b border-white/10 bg-white/[0.02]">
                 <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-3 mb-2">
-                  <MessageSquare className="h-6 w-6 text-primary" /> Interview Data
+                  <MessageSquare className="h-6 w-6 text-red-500" /> Interview Data
                 </h2>
                 <p className="text-foreground/50 font-medium text-sm">Log questions, process, and outcomes.</p>
               </div>
@@ -309,7 +310,7 @@ export default function ContributePage() {
                   </div>
 
                   <div className="p-6 neu-pressed border-none rounded-2xl">
-                    <LabelGlass className="!ml-0 text-primary/80">Questions Asked *</LabelGlass>
+                    <LabelGlass className="!ml-0 text-red-500/80">Questions Asked *</LabelGlass>
                     <TextareaGlass 
                       name="questions"
                       placeholder="List the specific technical or behavioral questions." 
@@ -319,7 +320,7 @@ export default function ContributePage() {
                   </div>
                   
                   <div className="pt-6 flex justify-end">
-                    <Button type="submit" className="h-14 px-10 rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Submit Log</Button>
+                    <Button type="submit" className="h-14 px-10 rounded-full bg-white text-black hover:bg-white/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Submit Log</Button>
                   </div>
                 </form>
               </div>
@@ -331,7 +332,7 @@ export default function ContributePage() {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-8 md:p-10 border-b border-white/10 bg-white/[0.02]">
                 <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-3 mb-2">
-                  <Briefcase className="h-6 w-6 text-primary" /> Post Job
+                  <Briefcase className="h-6 w-6 text-red-500" /> Post Job
                 </h2>
                 <p className="text-foreground/50 font-medium text-sm">Share active openings or walk-in drives.</p>
               </div>
@@ -391,7 +392,7 @@ export default function ContributePage() {
                   </div>
                   
                   <div className="pt-6 flex justify-end">
-                    <Button type="submit" className="h-14 px-10 rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Broadcast Job</Button>
+                    <Button type="submit" className="h-14 px-10 rounded-full bg-white text-black hover:bg-white/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Broadcast Job</Button>
                   </div>
                 </form>
               </div>
@@ -403,7 +404,7 @@ export default function ContributePage() {
              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-8 md:p-10 border-b border-white/10 bg-white/[0.02]">
                 <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-3 mb-2">
-                  <Handshake className="h-6 w-6 text-primary" /> Offer Referral
+                  <Handshake className="h-6 w-6 text-red-500" /> Offer Referral
                 </h2>
                 <p className="text-foreground/50 font-medium text-sm">Help someone get their foot in the door.</p>
               </div>
@@ -469,7 +470,7 @@ export default function ContributePage() {
                   </div>
                   
                   <div className="pt-6 flex justify-end">
-                    <Button type="submit" className="h-14 px-10 rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Post Referral</Button>
+                    <Button type="submit" className="h-14 px-10 rounded-full bg-white text-black hover:bg-white/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Post Referral</Button>
                   </div>
                 </form>
               </div>
@@ -481,7 +482,7 @@ export default function ContributePage() {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-8 md:p-10 border-b border-white/10 bg-white/[0.02]">
                 <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-3 mb-2">
-                  <Heart className="h-6 w-6 text-primary" /> Culture Review
+                  <Heart className="h-6 w-6 text-red-500" /> Culture Review
                 </h2>
                 <p className="text-foreground/50 font-medium text-sm">Share the reality of working at your company.</p>
               </div>
@@ -521,7 +522,7 @@ export default function ContributePage() {
                   </div>
 
                   <div className="pt-6 flex justify-end">
-                    <Button type="submit" className="h-14 px-10 rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Submit Review</Button>
+                    <Button type="submit" className="h-14 px-10 rounded-full bg-white text-black hover:bg-white/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Submit Review</Button>
                   </div>
                 </form>
               </div>
@@ -533,7 +534,7 @@ export default function ContributePage() {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-8 md:p-10 border-b border-white/10 bg-white/[0.02]">
                 <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-3 mb-2">
-                  <ClipboardList className="h-6 w-6 text-primary" /> HR Feedback
+                  <ClipboardList className="h-6 w-6 text-red-500" /> HR Feedback
                 </h2>
                 <p className="text-foreground/50 font-medium text-sm">Review recruiters and hiring processes.</p>
               </div>
@@ -583,7 +584,7 @@ export default function ContributePage() {
                   </div>
 
                   <div className="pt-6 flex justify-end">
-                    <Button type="submit" className="h-14 px-10 rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Submit Feedback</Button>
+                    <Button type="submit" className="h-14 px-10 rounded-full bg-white text-black hover:bg-white/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Submit Feedback</Button>
                   </div>
                 </form>
               </div>
@@ -595,7 +596,7 @@ export default function ContributePage() {
              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-panel rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-8 md:p-10 border-b border-white/10 bg-white/[0.02]">
                 <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-3 mb-2">
-                  <TrendingUp className="h-6 w-6 text-primary" /> Salary Insights
+                  <TrendingUp className="h-6 w-6 text-red-500" /> Salary Insights
                 </h2>
                 <p className="text-foreground/50 font-medium text-sm">Add transparency to tech compensation.</p>
               </div>
@@ -644,7 +645,7 @@ export default function ContributePage() {
                   </div>
 
                   <div className="pt-6 flex justify-end">
-                    <Button type="submit" className="h-14 px-10 rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Submit Compensation</Button>
+                    <Button type="submit" className="h-14 px-10 rounded-full bg-white text-black hover:bg-white/90 font-medium text-base shadow-lg hover:shadow-xl transition-all">Submit Compensation</Button>
                   </div>
                 </form>
               </div>

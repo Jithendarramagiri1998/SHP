@@ -1,4 +1,4 @@
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import Navbar from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,16 +8,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
 
 export default function JobsPage() {
-  const [location] = useLocation();
-  const searchParams = new URLSearchParams(location.split('?')[1]);
-  const defaultTab = searchParams.get('tab') || "jobs";
+  const [, setLocation] = useLocation();
+  const searchString = useSearch();
+  const searchParams = new URLSearchParams(searchString);
+  const currentTab = searchParams.get('tab') || "jobs";
   
   const { jobs, referrals, cultures, interviews, hrFeedbacks } = useStore();
   
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2" />
-      <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-red-900/10 rounded-full blur-[150px] pointer-events-none" />
 
       <Navbar />
       
@@ -32,7 +33,7 @@ export default function JobsPage() {
           </p>
         </motion.div>
 
-        <Tabs defaultValue={defaultTab} className="space-y-12">
+        <Tabs value={currentTab} onValueChange={(val) => setLocation(`/jobs?tab=${val}`)} className="space-y-12">
           <TabsList className="flex flex-wrap justify-center h-auto bg-transparent p-0 gap-2 border-none mb-12">
             {[
               { id: 'jobs', icon: Briefcase, label: 'Jobs' },
@@ -113,7 +114,7 @@ function EmptyState({ title, description, link }: { title: string, description: 
       <h3 className="text-2xl font-semibold mb-3 tracking-tight">{title}</h3>
       <p className="text-foreground/60 font-medium mb-8 max-w-md mx-auto">{description}</p>
       <Link href={link}>
-        <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-8 h-12 font-medium">
+        <Button className="rounded-full bg-white text-black hover:bg-white/90 px-8 h-12 font-medium">
           Contribute Now
         </Button>
       </Link>
@@ -126,8 +127,8 @@ function JobCard({ job }: { job: Job }) {
     <div className="glass-card p-6 flex flex-col h-full group">
       <div className="flex-1">
         <div className="flex justify-between items-start mb-4">
-          <h3 className="text-xl font-semibold tracking-tight leading-tight group-hover:text-primary transition-colors">{job.title}</h3>
-          {job.isWalkin && <Badge variant="secondary" className="bg-white/10 hover:bg-white/20 text-foreground border-none font-medium rounded-full text-[10px]">Walk-in</Badge>}
+          <h3 className="text-xl font-semibold tracking-tight leading-tight group-hover:text-red-500 transition-colors">{job.title}</h3>
+          {job.isWalkin && <Badge variant="secondary" className="bg-red-500/20 hover:bg-red-500/30 text-red-400 border-none font-medium rounded-full text-[10px]">Walk-in</Badge>}
         </div>
         
         <div className="space-y-3 text-sm font-medium text-foreground/60 mb-6">
@@ -153,7 +154,7 @@ function JobCard({ job }: { job: Job }) {
             <span className="text-foreground/80 block">{job.authorName}</span>
           </div>
         </div>
-        <Button className="rounded-full h-8 px-4 text-xs bg-white/10 hover:bg-white/20 text-foreground" asChild>
+        <Button className="rounded-full h-8 px-4 text-xs bg-white/10 hover:bg-red-500/20 hover:text-red-400 text-foreground" asChild>
           <a href={job.url || "#"} target="_blank" rel="noopener noreferrer">Apply <ArrowRight className="ml-1.5 h-3 w-3" /></a>
         </Button>
       </div>
@@ -213,12 +214,12 @@ function ReferralCard({ referral }: { referral: Referral }) {
         
         <div className="flex gap-2">
           {referral.contactEmail && (
-            <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 bg-white/5 hover:bg-white/10 text-foreground" asChild>
+            <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-foreground" asChild>
               <a href={`mailto:${referral.contactEmail}`}><Mail className="h-3.5 w-3.5" /></a>
             </Button>
           )}
           {referral.contactLinkedin && (
-            <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 bg-white/5 hover:bg-white/10 text-foreground" asChild>
+            <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 bg-white/5 hover:bg-red-500/20 hover:text-red-400 text-foreground" asChild>
               <a href={referral.contactLinkedin} target="_blank" rel="noopener noreferrer"><Linkedin className="h-3.5 w-3.5" /></a>
             </Button>
           )}
@@ -237,7 +238,7 @@ function CultureCard({ culture }: { culture: WorkCulture }) {
           <p className="text-xs font-medium text-foreground/50 mt-1">Review by {culture.authorName}</p>
         </div>
         <div className="neu-pressed px-3 py-1 font-bold text-sm text-foreground/90 rounded-full flex items-center gap-1">
-          {culture.rating} <Heart className="h-3 w-3 fill-primary/50 text-primary/50" />
+          {culture.rating} <Heart className="h-3 w-3 fill-red-500/50 text-red-500/50" />
         </div>
       </div>
 
@@ -273,7 +274,7 @@ function InterviewCard({ interview }: { interview: Interview }) {
         <div>
           <div className="flex gap-2 mb-6">
             <Badge variant="secondary" className="rounded-full bg-white/5 text-foreground/70 font-medium text-[10px] border border-white/10">{interview.difficulty}</Badge>
-            <Badge variant="outline" className={`rounded-full border-none font-medium text-[10px] ${interview.outcome === 'Offer' ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-foreground/80'}`}>{interview.outcome}</Badge>
+            <Badge variant="outline" className={`rounded-full border-none font-medium text-[10px] ${interview.outcome === 'Offer' ? 'bg-red-500/20 text-red-400' : 'bg-white/10 text-foreground/80'}`}>{interview.outcome}</Badge>
           </div>
           <h3 className="text-2xl font-bold tracking-tight leading-none mb-3">{interview.role}</h3>
           <p className="font-medium text-foreground/80">{interview.company}</p>
