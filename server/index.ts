@@ -72,18 +72,16 @@ app.use((req, res, next) => {
 // ✅ MongoDB Connection (BEST PRACTICE)
 async function connectDB() {
   try {
-    if (!process.env.MONGO_URL) {
-      throw new Error("❌ MONGO_URL not found in .env");
-    }
+    console.log("MONGO_URL:", process.env.MONGO_URL);  // 👈 ADD THIS
 
     console.log("🔄 Connecting to MongoDB...");
 
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL as string);
 
     console.log("✅ MongoDB Connected");
   } catch (err) {
     console.error("❌ MongoDB Error:", err);
-    process.exit(1); // stop server if DB fails
+    process.exit(1);
   }
 }
 
