@@ -1,9 +1,7 @@
+import { pgTable, text, uuid, timestamp, integer, varchar } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
-import { pgTable, text, uuid, timestamp, integer } from "drizzle-orm/pg-core";
 
+/* USERS */
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
@@ -61,7 +59,7 @@ export const cultures = pgTable("cultures", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-/* HR FEEDBACK */
+/* HR */
 export const hrFeedback = pgTable("hr_feedback", {
   id: uuid("id").defaultRandom().primaryKey(),
   company: text("company"),
