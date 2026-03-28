@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* =========================
-   THEME
+   THEME CONFIG
 ========================= */
 @theme inline {
   --font-sans: "Inter", sans-serif;
@@ -13,18 +13,54 @@
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
   --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
 /* =========================
-   LUXURY DARK THEME
+   ROOT COLORS (UPGRADED)
 ========================= */
 :root {
-  --background: 0 0% 4%;     /* deep black */
-  --foreground: 0 0% 98%;    /* white */
+  --background: 240 15% 6%;
+  --foreground: 0 0% 100%;
 
-  --card: 0 0% 8%;
-  --border: 0 0% 15%;
+  --card: 240 10% 10%;
+  --card-foreground: 0 0% 100%;
+
+  --popover: 240 10% 10%;
+  --popover-foreground: 0 0% 100%;
+
+  --primary: 0 90% 55%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 240 8% 14%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 240 6% 18%;
+  --muted-foreground: 0 0% 65%;
+
+  --accent: 0 90% 55%;
+  --accent-foreground: 0 0% 100%;
+
+  --border: 240 6% 20%;
+  --input: 240 6% 20%;
+  --ring: 0 90% 55%;
 
   --radius: 1rem;
 }
@@ -38,71 +74,78 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased text-foreground;
+    background: radial-gradient(circle at 20% 20%, #1a1a2e, transparent),
+                radial-gradient(circle at 80% 0%, #3b0a0a, transparent),
+                radial-gradient(circle at 50% 100%, #000000, #020202);
+    min-height: 100vh;
   }
 
-  h1 {
-    @apply text-5xl md:text-6xl font-extrabold tracking-tight;
-  }
-
-  h2 {
-    @apply text-4xl font-bold;
-  }
-
-  h3 {
-    @apply text-2xl font-semibold;
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
   }
 }
 
 /* =========================
-   UTILITIES
+   UTILITIES (UPGRADED)
 ========================= */
 @layer utilities {
 
-  /* 🌈 Apple Hero Gradient (LIKE IMAGE) */
-  .apple-hero-bg {
-    background: linear-gradient(
-      to bottom,
-      #1a1f5c 0%,
-      #2d3a8c 30%,
-      #4c5bd4 60%,
-      #aab3ff 100%
-    );
+  /* 🌌 Animated gradient background */
+  .animated-gradient-bg {
+    background: linear-gradient(-45deg, #0a0a0a, #1a1a2e, #000000, #2a0000);
+    background-size: 400% 400%;
+    animation: gradient 12s ease infinite;
     min-height: 100vh;
   }
 
-  /* ✨ Glow Text (Apple style) */
-  .apple-glow-text {
-    background: linear-gradient(
-      90deg,
-      #00d4ff,
-      #7c7cff,
-      #ff7ac6,
-      #ffd166
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* 💎 Glass */
+  /* 🧊 Glass base */
   .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg;
   }
 
-  /* 🧊 Card */
+  /* 🧊 Premium cards */
   .glass-card {
-    @apply bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl 
-           shadow-xl hover:shadow-2xl transition-all duration-300;
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 
+           hover:border-red-500/40 hover:bg-red-500/5
+           transition-all duration-300 rounded-2xl shadow-md;
   }
 
-  /* 🔴 Red Premium Button */
-  .btn-primary {
-    @apply bg-red-600 text-white font-semibold px-6 py-3 rounded-full 
-           hover:bg-red-700 transition-all duration-300;
+  /* 🧊 Panels */
+  .glass-panel {
+    @apply bg-black/40 backdrop-blur-2xl border border-white/10;
   }
 
-  /* ⚪ White Button */
-  .btn-white {
-    @apply bg-white text-black font-semibold px-6 py-3 rounded-full;
+  /* ⚡ Neon glow button */
+  .btn-glow {
+    @apply bg-gradient-to-r from-red-500 to-red-700 text-white 
+           shadow-[0_0_20px_rgba(255,0,0,0.4)] 
+           hover:shadow-[0_0_30px_rgba(255,0,0,0.8)] 
+           transition-all duration-300;
   }
+
+  /* 💡 Text glow */
+  .text-glow {
+    text-shadow: 0 0 25px rgba(255, 0, 0, 0.6);
+  }
+
+  /* 🌈 Gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent 
+           bg-gradient-to-r from-white via-red-300 to-red-500;
+  }
+
+  /* 🧠 Soft neumorphism */
+  .neu {
+    @apply bg-[#0a0a0a] shadow-[4px_4px_20px_rgba(0,0,0,0.6),_-4px_-4px_20px_rgba(255,255,255,0.02)] rounded-2xl;
+  }
+}
+
+/* =========================
+   ANIMATION
+========================= */
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
