@@ -1,9 +1,9 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
+import { type Server } from "http";
 import { db } from "./db";
 import { interviews, jobs, referrals, cultures, hrFeedback, salaries } from "../shared/schema";
 
-export async function registerRoutes(httpServer, app) {
+export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
 
   app.post("/api/interview", async (req, res) => {
     await db.insert(interviews).values(req.body);
