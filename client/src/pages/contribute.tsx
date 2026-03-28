@@ -23,25 +23,26 @@ export default function ContributePage() {
   const handleInterviewSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    addInterview({
-      company: formData.get('company') as string,
-      role: formData.get('role') as string,
-      difficulty: formData.get('difficulty') as string,
-      level: formData.get('level') as string,
-      outcome: formData.get('outcome') as string,
-      experience: formData.get('experience') as string,
-      process: formData.get('process') as string,
-      questions: formData.get('questions') as string,
-      authorId: profile.id,
-      authorName: profile.name,
-      authorCompany: profile.company,
-      authorLocation: profile.location,
-      authorExperience: profile.experience,
-    });
+    await fetch("/api/interview", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    company: formData.get("company"),
+    role: formData.get("role"),
+    difficulty: formData.get("difficulty"),
+    level: formData.get("level"),
+    outcome: formData.get("outcome"),
+    experience: formData.get("experience"),
+    process: formData.get("process"),
+    questions: formData.get("questions"),
+  }),
+});
     setSubmitted(true);
   };
 
-  const handleJobSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleInterviewSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const offerType = formData.get('offer') as string;
