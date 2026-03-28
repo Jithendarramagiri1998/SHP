@@ -14,3 +14,10 @@ export async function registerRoutes(
 
   return httpServer;
 }
+app.post("/api/interview", async (req, res) => {
+  const data = req.body;
+
+  await db.insert(interviews).values(data);
+
+  res.json({ success: true });
+});
