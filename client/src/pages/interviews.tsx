@@ -1,45 +1,108 @@
 import Navbar from "@/components/layout/Navbar";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Building, MessageSquare, ThumbsUp, Calendar, AlertCircle } from "lucide-react";
+import {
+  Search,
+  MessageSquare,
+  ThumbsUp,
+  Calendar,
+  AlertCircle,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useStore, Interview } from "@/lib/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 
+/* =========================
+   TYPES
+========================= */
+type Interview = {
+  id: string;
+  company: string;
+  role: string;
+  level?: string;
+  difficulty?: string;
+  outcome?: string;
+  process?: string;
+  questions?: string;
+  createdAt: string;
+};
+
+/* =========================
+   PAGE
+========================= */
 export default function InterviewsPage() {
-  const { interviews } = useStore();
+  const [interviews, setInterviews] = useState<Interview[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const filteredInterviews = interviews.filter(i => {
-    return i.company.toLowerCase().includes(searchTerm.toLowerCase()) || 
-           i.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           i.questions.toLowerCase().includes(searchTerm.toLowerCase());
-  });
+  /* =========================
+     FETCH DATA
+  ========================= */
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/interviews");
 
+        if (!res.ok) {
+          throw new Error("Failed to fetch interviews");
+        }
+
+        const data = await res.json();
+        setInterviews(data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  /* =========================
+     FILTER
+  ========================= */
+  const filtered = interviews.filter((i) =>
+    [i.company, i.role, i.questions]
+      .join(" ")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
+
+  /* =========================
+     UI
+  ========================= */
   return (
     <div className="min-h-screen bg-muted/20">
       <Navbar />
-      
+
       <main className="container mx-auto py-8 px-4 md:px-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Interview Insights</h1>
-            <p className="text-muted-foreground mt-1">Read real interview experiences, processes, and questions asked by top companies.</p>
+            <h1 className="text-3xl font-bold">Interview Insights</h1>
+            <p className="text-muted-foreground mt-1">
+              Real interview experiences from top companies.
+            </p>
           </div>
+
           <Link href="/contribute?tab=interview">
-            <Button>Add Interview Experience</Button>
+            <Button>Add Experience</Button>
           </Link>
         </div>
 
-        <Card className="mb-8 border-border/60 shadow-sm">
-          <CardContent className="p-4 flex flex-col md:flex-row gap-3">
+        {/* SEARCH */}
+        <Card className="mb-8">
+          <CardContent className="p-4 flex gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search companies, roles, or questions..." 
-                className="pl-9" 
+              <Search className="absolute left-3 top-3 h-4 w-4" />
+              <Input
+                placeholder="Search..."
+                className="pl-9"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -47,65 +110,72 @@ export default function InterviewsPage() {
           </CardContent>
         </Card>
 
+        {/* LOADING */}
+        {loading && (
+          <div className="text-center py-10">Loading...</div>
+        )}
+
+        {/* ERROR */}
+        {error && (
+          <div className="text-center text-red-500">{error}</div>
+        )}
+
+        {/* EMPTY */}
+        {!loading && filtered.length === 0 && (
+          <div className="text-center py-10">
+            No interviews found
+          </div>
+        )}
+
+        {/* LIST */}
         <div className="space-y-6">
-          {filteredInterviews.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground bg-card border border-border/60 rounded-xl shadow-sm">
-              <p>No interview experiences found.</p>
-              <p className="mt-2 text-sm">Be the first to share your experience!</p>
-            </div>
-          ) : (
-            filteredInterviews.map((interview: Interview) => (
-              <Card key={interview.id} className="border-border/60 shadow-sm overflow-hidden">
-                <div className="flex flex-col md:flex-row border-b border-border/50 bg-secondary/20 p-4 gap-4 items-start md:items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-background rounded-lg shadow-sm flex items-center justify-center font-bold text-xl text-primary border border-border/50">
-                      {interview.company.charAt(0)}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg flex items-center gap-2">
-                        {interview.company} <span className="text-muted-foreground font-normal text-sm">for {interview.role} ({interview.level})</span>
-                      </h3>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                        <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {interview.date}</span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1">Difficulty: <span className="font-medium text-foreground">{interview.difficulty}</span></span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Badge variant={interview.outcome === "Offer" ? "default" : "outline"} className={interview.outcome === "Offer" ? "bg-green-600 hover:bg-green-700" : ""}>
-                      {interview.outcome}
-                    </Badge>
-                  </div>
+          {filtered.map((i) => (
+            <Card key={i.id}>
+
+              {/* HEADER */}
+              <div className="flex justify-between p-4 border-b">
+                <div>
+                  <h3 className="font-semibold">
+                    {i.company} – {i.role}
+                  </h3>
+
+                  <p className="text-sm text-muted-foreground flex gap-2">
+                    <Calendar size={14} />
+                    {new Date(i.createdAt).toLocaleDateString()}
+                  </p>
                 </div>
-                
-                <CardContent className="p-6 space-y-6">
-                  <div>
-                    <h4 className="font-semibold mb-2 flex items-center gap-2">
-                      <AlertCircle className="h-4 w-4 text-primary" />
-                      Interview Process
-                    </h4>
-                    <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">{interview.process}</p>
-                  </div>
 
-                  <div className="bg-primary/5 border border-primary/10 rounded-xl p-4">
-                    <h4 className="font-semibold mb-2 flex items-center gap-2 text-primary">
-                      <MessageSquare className="h-4 w-4" />
-                      Questions Asked & Suggestions
-                    </h4>
-                    <p className="text-sm font-medium leading-relaxed whitespace-pre-wrap">{interview.questions}</p>
-                  </div>
+                <Badge>{i.outcome}</Badge>
+              </div>
 
-                  <div className="flex items-center gap-4 pt-2">
-                    <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
-                      <ThumbsUp className="h-4 w-4" /> Helpful
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
+              {/* BODY */}
+              <CardContent className="space-y-4">
+
+                <div>
+                  <h4 className="font-semibold flex gap-2">
+                    <AlertCircle size={14} />
+                    Process
+                  </h4>
+                  <p className="text-sm">{i.process}</p>
+                </div>
+
+                <div className="bg-muted p-3 rounded">
+                  <h4 className="font-semibold flex gap-2">
+                    <MessageSquare size={14} />
+                    Questions
+                  </h4>
+                  <p className="text-sm">{i.questions}</p>
+                </div>
+
+                <Button variant="ghost" size="sm">
+                  <ThumbsUp size={14} /> Helpful
+                </Button>
+
+              </CardContent>
+            </Card>
+          ))}
         </div>
+
       </main>
     </div>
   );
