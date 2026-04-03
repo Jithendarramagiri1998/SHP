@@ -2,163 +2,129 @@ import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Briefcase, Sparkles, CheckCircle2, MessageSquare, Handshake, Heart, ClipboardList, TrendingUp } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CheckCircle2 } from "lucide-react";
 import { useLocation, useSearch } from "wouter";
-import { useStore } from "@/lib/store";
-import { motion } from "framer-motion";
+
+/* =========================
+   AUTH HEADER
+========================= */
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+};
 
 export default function ContributePage() {
   const [, setLocation] = useLocation();
   const searchString = useSearch();
   const searchParams = new URLSearchParams(searchString);
-  const currentTab = searchParams.get('tab') || "interview";
+  const currentTab = searchParams.get("tab") || "interview";
 
-  const { profile } = useStore();
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   /* =========================
-     INTERVIEW
+     COMMON SUBMIT FUNCTION
   ========================= */
-  const handleInterviewSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+  const submitData = async (url: string, payload: any) => {
+    const token = localStorage.getItem("token");
 
-    await fetch("/api/interview", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        company: formData.get("company"),
-        role: formData.get("role"),
-        difficulty: formData.get("difficulty"),
-        level: formData.get("level"),
-        outcome: formData.get("outcome"),
-        experience: formData.get("experience"),
-        process: formData.get("process"),
-        questions: formData.get("questions"),
-      }),
-    });
+    if (!token) {
+      alert("Please login first");
+      setLocation("/auth");
+      return;
+    }
 
-    setSubmitted(true);
+    try {
+      setLoading(true);
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   /* =========================
-     JOB
+     HANDLERS
   ========================= */
-  const handleJobSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+  const handleInterview = (e: any) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const f = new FormData(e.currentTarget);
 
-    await fetch("/api/job", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        title: formData.get("title"),
-        company: formData.get("company"),
-        location: formData.get("location"),
-        experienceRequired: formData.get("experienceRequired"),
-        description: formData.get("description"),
-        url: formData.get("url"),
-      }),
+    submitData("/api/interview", {
+      company: f.get("company"),
+      role: f.get("role"),
+      process: f.get("process"),
+      questions: f.get("questions"),
     });
-
-    setSubmitted(true);
   };
 
-  /* =========================
-     REFERRAL
-  ========================= */
-  const handleReferralSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleJob = (e: any) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const f = new FormData(e.currentTarget);
 
-    await fetch("/api/referral", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        company: formData.get("company"),
-        role: formData.get("role"),
-        location: formData.get("location"),
-        experienceRequired: formData.get("experienceRequired"),
-        instructions: formData.get("instructions"),
-        contactEmail: formData.get("contactEmail"),
-        contactLinkedin: formData.get("contactLinkedin"),
-      }),
+    submitData("/api/job", {
+      title: f.get("title"),
+      company: f.get("company"),
+      location: f.get("location"),
     });
-
-    setSubmitted(true);
   };
 
-  /* =========================
-     CULTURE
-  ========================= */
-  const handleCultureSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleReferral = (e: any) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const f = new FormData(e.currentTarget);
 
-    await fetch("/api/culture", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        company: formData.get("company"),
-        rating: Number(formData.get("rating")),
-        pros: formData.get("pros"),
-        cons: formData.get("cons"),
-        workLifeBalance: formData.get("workLifeBalance"),
-        management: formData.get("management"),
-      }),
+    submitData("/api/referral", {
+      company: f.get("company"),
+      role: f.get("role"),
     });
-
-    setSubmitted(true);
   };
 
-  /* =========================
-     HR FEEDBACK
-  ========================= */
-  const handleHrFeedbackSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCulture = (e: any) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const f = new FormData(e.currentTarget);
 
-    await fetch("/api/hr-feedback", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        company: formData.get("company"),
-        hrName: formData.get("hrName"),
-        hrEmail: formData.get("hrEmail"),
-        hrLinkedin: formData.get("hrLinkedin"),
-        comments: formData.get("comments"),
-      }),
+    submitData("/api/culture", {
+      company: f.get("company"),
     });
-
-    setSubmitted(true);
   };
 
-  /* =========================
-     SALARY
-  ========================= */
-  const handleSalarySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleHR = (e: any) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const f = new FormData(e.currentTarget);
 
-    await fetch("/api/salary", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        company: formData.get("company"),
-        location: formData.get("location"),
-        title: formData.get("title"),
-        yoe: Number(formData.get("yoe")),
-        base: Number(formData.get("base")),
-        bonus: Number(formData.get("bonus")),
-        stock: Number(formData.get("stock")),
-      }),
+    submitData("/api/hr-feedback", {
+      company: f.get("company"),
     });
+  };
 
-    setSubmitted(true);
+  const handleSalary = (e: any) => {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+
+    submitData("/api/salary", {
+      company: f.get("company"),
+    });
   };
 
   /* =========================
@@ -183,11 +149,13 @@ export default function ContributePage() {
      MAIN UI
   ========================= */
   return (
-    <div>
+    <div className="min-h-screen">
       <Navbar />
 
-      <Tabs value={currentTab} onValueChange={(val) => setLocation(`/contribute?tab=${val}`)}>
-        
+      <Tabs
+        value={currentTab}
+        onValueChange={(val) => setLocation(`/contribute?tab=${val}`)}
+      >
         <TabsList>
           <TabsTrigger value="interview">Interview</TabsTrigger>
           <TabsTrigger value="job">Job</TabsTrigger>
@@ -197,53 +165,71 @@ export default function ContributePage() {
           <TabsTrigger value="salary">Salary</TabsTrigger>
         </TabsList>
 
+        {/* INTERVIEW */}
         <TabsContent value="interview">
-          <form onSubmit={handleInterviewSubmit}>
+          <form onSubmit={handleInterview} className="space-y-3">
             <Input name="company" placeholder="Company" required />
             <Input name="role" placeholder="Role" required />
-            <Textarea name="process" placeholder="Process" required />
-            <Textarea name="questions" placeholder="Questions" required />
-            <Button type="submit">Submit</Button>
+            <Input name="process" placeholder="Process" required />
+            <Input name="questions" placeholder="Questions" required />
+            <Button disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
           </form>
         </TabsContent>
 
+        {/* JOB */}
         <TabsContent value="job">
-          <form onSubmit={handleJobSubmit}>
+          <form onSubmit={handleJob} className="space-y-3">
             <Input name="title" placeholder="Job Title" required />
             <Input name="company" placeholder="Company" required />
-            <Button type="submit">Submit</Button>
+            <Input name="location" placeholder="Location" />
+            <Button disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
           </form>
         </TabsContent>
 
+        {/* REFERRAL */}
         <TabsContent value="referral">
-          <form onSubmit={handleReferralSubmit}>
+          <form onSubmit={handleReferral} className="space-y-3">
             <Input name="company" placeholder="Company" required />
             <Input name="role" placeholder="Role" required />
-            <Button type="submit">Submit</Button>
+            <Button disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
           </form>
         </TabsContent>
 
+        {/* CULTURE */}
         <TabsContent value="culture">
-          <form onSubmit={handleCultureSubmit}>
+          <form onSubmit={handleCulture} className="space-y-3">
             <Input name="company" placeholder="Company" required />
-            <Button type="submit">Submit</Button>
+            <Button disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
           </form>
         </TabsContent>
 
+        {/* HR */}
         <TabsContent value="hrfeedback">
-          <form onSubmit={handleHrFeedbackSubmit}>
+          <form onSubmit={handleHR} className="space-y-3">
             <Input name="company" placeholder="Company" required />
-            <Button type="submit">Submit</Button>
+            <Button disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
           </form>
         </TabsContent>
 
+        {/* SALARY */}
         <TabsContent value="salary">
-          <form onSubmit={handleSalarySubmit}>
+          <form onSubmit={handleSalary} className="space-y-3">
             <Input name="company" placeholder="Company" required />
-            <Button type="submit">Submit</Button>
+            <Button disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
           </form>
         </TabsContent>
-
       </Tabs>
     </div>
   );
