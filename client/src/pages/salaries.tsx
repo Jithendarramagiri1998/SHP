@@ -101,7 +101,7 @@ export default function SalariesPage() {
      LOADING
   ========================= */
   if (loading) {
-[O    return (
+return (
       <div className="min-h-screen flex items-center justify-center">
         Loading salaries...
       </div>

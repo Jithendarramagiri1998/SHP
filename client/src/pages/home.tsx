@@ -99,7 +99,7 @@ export default function Home() {
      UI
   ========================= */
 
-[O  return (
+  return (
     <div className="min-h-screen">
       <Navbar />
 
@@ -159,7 +159,7 @@ export default function Home() {
           </div>
 
           {recentInterviews.length === 0 ? (
-[I            <p>No interviews found</p>
+            <p>No interviews found</p>
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
               {recentInterviews.map((i) => (
