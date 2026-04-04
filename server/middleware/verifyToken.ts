@@ -20,7 +20,7 @@ if (!process.env.JWT_SECRET) {
 const SECRET = process.env.JWT_SECRET;
 
 /* =========================
-   VERIFY TOKEN MIDDLEWARE
+   VERIFY ACCESS TOKEN
 ========================= */
 
 export const verifyToken = (
@@ -38,7 +38,7 @@ export const verifyToken = (
       });
     }
 
-    // Expect: Bearer token
+    // Expect: Bearer <token>
     const parts = authHeader.split(" ");
 
     if (parts.length !== 2 || parts[0] !== "Bearer") {
@@ -50,9 +50,16 @@ export const verifyToken = (
     const token = parts[1];
 
     // 🔐 Verify token
-    const decoded = jwt.verify(token, SECRET);
+    const decoded: any = jwt.verify(token, SECRET);
 
-    // Attach user info
+    // 🚨 IMPORTANT: Ensure it's ACCESS token
+    if (decoded.type !== "access") {
+      return res.status(401).json({
+        error: "Invalid token type",
+      });
+    }
+
+    // Attach user
     req.user = decoded;
 
     next();
@@ -63,4 +70,53 @@ export const verifyToken = (
       error: "Unauthorized / Token expired",
     });
   }
+};
+
+/* =========================
+   ADMIN CHECK
+========================= */
+
+export const isAdmin = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ error: "Admin only access" });
+  }
+
+  next();
+};
+
+/* =========================
+   OWNER OR ADMIN CHECK
+========================= */
+
+export const isOwnerOrAdmin = (
+  getUserId: (req: AuthRequest) => string
+) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const resourceUserId = getUserId(req);
+
+      if (
+        req.user?.id !== resourceUserId &&
+        req.user?.role !== "admin"
+      ) {
+        return res.status(403).json({
+          error: "Not allowed",
+        });
+      }
+
+      next();
+    } catch (err) {
+      return res.status(500).json({
+        error: "Authorization failed",
+      });
+    }
+  };
 };
